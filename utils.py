@@ -5,6 +5,13 @@ import torch.nn.functional as F
 
 import curves
 
+# Optional progress bar
+try:
+    from tqdm import tqdm
+except Exception:
+    tqdm = None
+
+
 def _get_default_device():
     # Prefer CUDA, then MPS (Metal on mac), otherwise CPU
     if torch.cuda.is_available():
@@ -17,7 +24,6 @@ def _get_default_device():
 
 # module-level device; utils will move inputs/targets to this device
 _device = _get_default_device()
-
 
 
 def l2_regularizer(weight_decay):
@@ -54,13 +60,20 @@ def save_checkpoint(dir, epoch, name='checkpoint', **kwargs):
     torch.save(state, filepath)
 
 
-def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedule=None):
+def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedule=None, epoch=None):
     loss_sum = 0.0
     correct = 0.0
 
     num_iters = len(train_loader)
     model.train()
-    for iter, (input, target) in enumerate(train_loader):
+
+    # wrap iterator with tqdm if available
+    iterator = train_loader
+    if tqdm is not None:
+        desc = f"Epoch {epoch} train" if epoch is not None else "train"
+        iterator = tqdm(train_loader, desc=desc, leave=False, dynamic_ncols=True)
+
+    for iter, (input, target) in enumerate(iterator):
         if lr_schedule is not None:
             lr = lr_schedule(iter / num_iters)
             adjust_learning_rate(optimizer, lr)
@@ -86,14 +99,19 @@ def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedu
     }
 
 
-def test(test_loader, model, criterion, regularizer=None, **kwargs):
+def test(test_loader, model, criterion, regularizer=None, epoch=None, **kwargs):
     loss_sum = 0.0
     nll_sum = 0.0
     correct = 0.0
 
     model.eval()
 
-    for input, target in test_loader:
+    iterator = test_loader
+    if tqdm is not None:
+        desc = f"Epoch {epoch} test" if epoch is not None else "test"
+        iterator = tqdm(test_loader, desc=desc, leave=False, dynamic_ncols=True)
+
+    for input, target in iterator:
         input = input.to(_device, non_blocking=True)
         target = target.to(_device, non_blocking=True)
 
@@ -115,7 +133,6 @@ def test(test_loader, model, criterion, regularizer=None, **kwargs):
     }
 
 
-
 def predictions(test_loader, model, **kwargs):
     model.eval()
     preds = []
@@ -125,7 +142,7 @@ def predictions(test_loader, model, **kwargs):
         output = model(input, **kwargs)
         probs = F.softmax(output, dim=1)
         preds.append(probs.cpu().data.numpy())
-        targets.append(target.numpy())
+        targets.append(target.cpu().numpy())
     return np.vstack(preds), np.concatenate(targets)
 
 
@@ -168,7 +185,12 @@ def update_bn(loader, model, **kwargs):
     model.apply(reset_bn)
     model.apply(lambda module: _get_momenta(module, momenta))
     num_samples = 0
-    for input, _ in loader:
+
+    iterator = loader
+    if tqdm is not None:
+        iterator = tqdm(loader, desc="update BN", leave=False, dynamic_ncols=True)
+
+    for input, _ in iterator:
         input = input.to(_device, non_blocking=True)
         batch_size = input.data.size(0)
 

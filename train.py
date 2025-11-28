@@ -81,6 +81,9 @@ def main():
         f.write(' '.join(sys.argv))
         f.write('\n')
 
+    # print run info for clarity
+    print(f"Training: dir={args.dir} model={args.model} transform={args.transform} epochs={args.epochs} seed={args.seed}")
+
     # Choose device: prefer CUDA, then MPS (Metal on mac), else CPU
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -168,9 +171,10 @@ def main():
         lr = learning_rate_schedule(args.lr, epoch, args.epochs)
         utils.adjust_learning_rate(optimizer, lr)
 
-        train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer)
+        # pass epoch to utils.train/test so it can show a progress bar
+        train_res = utils.train(loaders['train'], model, optimizer, criterion, regularizer, epoch=epoch)
         if args.curve is None or not has_bn:
-            test_res = utils.test(loaders['test'], model, criterion, regularizer)
+            test_res = utils.test(loaders['test'], model, criterion, regularizer, epoch=epoch)
 
         if epoch % args.save_freq == 0:
             utils.save_checkpoint(
