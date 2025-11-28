@@ -5,6 +5,20 @@ import torch.nn.functional as F
 
 import curves
 
+def _get_default_device():
+    # Prefer CUDA, then MPS (Metal on mac), otherwise CPU
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        return torch.device("mps")
+    else:
+        return torch.device("cpu")
+
+
+# module-level device; utils will move inputs/targets to this device
+_device = _get_default_device()
+
+
 
 def l2_regularizer(weight_decay):
     def regularizer(model):
@@ -50,8 +64,8 @@ def train(train_loader, model, optimizer, criterion, regularizer=None, lr_schedu
         if lr_schedule is not None:
             lr = lr_schedule(iter / num_iters)
             adjust_learning_rate(optimizer, lr)
-        input = input.cuda(async=True)
-        target = target.cuda(async=True)
+        input = input.to(_device, non_blocking=True)
+        target = target.to(_device, non_blocking=True)
 
         output = model(input)
         loss = criterion(output, target)
@@ -80,8 +94,8 @@ def test(test_loader, model, criterion, regularizer=None, **kwargs):
     model.eval()
 
     for input, target in test_loader:
-        input = input.cuda(async=True)
-        target = target.cuda(async=True)
+        input = input.to(_device, non_blocking=True)
+        target = target.to(_device, non_blocking=True)
 
         output = model(input, **kwargs)
         nll = criterion(output, target)
@@ -107,7 +121,7 @@ def predictions(test_loader, model, **kwargs):
     preds = []
     targets = []
     for input, target in test_loader:
-        input = input.cuda(async=True)
+        input = input.to(_device, non_blocking=True)
         output = model(input, **kwargs)
         probs = F.softmax(output, dim=1)
         preds.append(probs.cpu().data.numpy())
@@ -155,7 +169,7 @@ def update_bn(loader, model, **kwargs):
     model.apply(lambda module: _get_momenta(module, momenta))
     num_samples = 0
     for input, _ in loader:
-        input = input.cuda(async=True)
+        input = input.to(_device, non_blocking=True)
         batch_size = input.data.size(0)
 
         momentum = batch_size / (num_samples + batch_size)

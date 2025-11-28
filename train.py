@@ -70,9 +70,20 @@ with open(os.path.join(args.dir, 'command.sh'), 'w') as f:
     f.write(' '.join(sys.argv))
     f.write('\n')
 
-torch.backends.cudnn.benchmark = True
+# Choose device: prefer CUDA, then MPS (Metal on mac), else CPU
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+    torch.backends.cudnn.benchmark = True
+elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+
+
 torch.manual_seed(args.seed)
-torch.cuda.manual_seed(args.seed)
+if device.type == 'cuda':
+    torch.cuda.manual_seed(args.seed)
+# no torch.mps.manual_seed; torch.manual_seed handles seeds for CPU/MPS
 
 loaders, num_classes = data.loaders(
     args.dataset,
@@ -111,7 +122,7 @@ else:
         if args.init_linear:
             print('Linear initialization.')
             model.init_linear()
-model.cuda()
+model.to(device)
 
 
 def learning_rate_schedule(base_lr, epoch, total_epochs):
