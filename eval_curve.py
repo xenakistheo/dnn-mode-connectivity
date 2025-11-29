@@ -48,7 +48,21 @@ args = parser.parse_args()
 
 os.makedirs(args.dir, exist_ok=True)
 
-torch.backends.cudnn.benchmark = True
+# Device selection: prefer CUDA, then MPS, else CPU
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+    torch.backends.cudnn.benchmark = True
+elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+
+# Ensure utils uses same device
+try:
+    utils._device = device
+except Exception:
+    # If utils doesn't expose _device for some reason, continue; utils falls back to its own detection
+    pass
 
 loaders, num_classes = data.loaders(
     args.dataset,
@@ -69,8 +83,10 @@ model = curves.CurveNet(
     args.num_bends,
     architecture_kwargs=architecture.kwargs,
 )
-model.cuda()
-checkpoint = torch.load(args.ckpt)
+model.to(device)
+
+# Load checkpoint onto the correct device
+checkpoint = torch.load(args.ckpt, map_location=device)
 model.load_state_dict(checkpoint['model_state'])
 
 criterion = F.cross_entropy
@@ -92,14 +108,16 @@ previous_weights = None
 
 columns = ['t', 'Train loss', 'Train nll', 'Train error (%)', 'Test nll', 'Test error (%)']
 
-t = torch.FloatTensor([0.0]).cuda()
+# t used to index points on the curve; put it on the selected device
+t = torch.tensor([0.0], device=device)
 for i, t_value in enumerate(ts):
-    t.data.fill_(t_value)
+    t.fill_(t_value)
     weights = model.weights(t)
     if previous_weights is not None:
         dl[i] = np.sqrt(np.sum(np.square(weights - previous_weights)))
     previous_weights = weights.copy()
 
+    # update batch-norm stats using train loader
     utils.update_bn(loaders['train'], model, t=t)
     tr_res = utils.test(loaders['train'], model, criterion, regularizer, t=t)
     te_res = utils.test(loaders['test'], model, criterion, regularizer, t=t)
@@ -112,7 +130,7 @@ for i, t_value in enumerate(ts):
     te_acc[i] = te_res['accuracy']
     te_err[i] = 100.0 - te_acc[i]
 
-    values = [t, tr_loss[i], tr_nll[i], tr_err[i], te_nll[i], te_err[i]]
+    values = [t_value, tr_loss[i], tr_nll[i], tr_err[i], te_nll[i], te_err[i]]
     table = tabulate.tabulate([values], columns, tablefmt='simple', floatfmt='10.4f')
     if i % 40 == 0:
         table = table.split('\n')
@@ -123,11 +141,11 @@ for i, t_value in enumerate(ts):
 
 
 def stats(values, dl):
-    min = np.min(values)
-    max = np.max(values)
+    mn = np.min(values)
+    mx = np.max(values)
     avg = np.mean(values)
-    int = np.sum(0.5 * (values[:-1] + values[1:]) * dl[1:]) / np.sum(dl[1:])
-    return min, max, avg, int
+    integral = np.sum(0.5 * (values[:-1] + values[1:]) * dl[1:]) / np.sum(dl[1:])
+    return mn, mx, avg, integral
 
 
 tr_loss_min, tr_loss_max, tr_loss_avg, tr_loss_int = stats(tr_loss, dl)
