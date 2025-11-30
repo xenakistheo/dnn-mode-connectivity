@@ -438,3 +438,29 @@ class ResNet650:
     kwargs = {'depth': 650}
 
 #Use depth = 6n + 2   with n = number of blocks per stage
+
+#add 8, 26, 38, 62, 116
+class ResNet8:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 8}
+
+class ResNet26:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 26}     
+
+class ResNet38:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 38}
+
+class ResNet62:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 62}
+
+class ResNet116:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 116}
