@@ -460,6 +460,11 @@ class ResNet62:
     curve = ResNetCurve
     kwargs = {'depth': 62}
 
+class ResNet65:
+    base = ResNetBase
+    curve = ResNetCurve
+    kwargs = {'depth': 65}  
+
 class ResNet116:
     base = ResNetBase
     curve = ResNetCurve
