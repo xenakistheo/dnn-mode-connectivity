@@ -10,7 +10,7 @@ import curves
 
 
 
-__all__ = ['ResNet8', 'ResNet20', 'ResNet26', 'ResNet32', 'ResNet38', 'ResNet44', 'ResNet56', 'ResNet62', 'ResNet101', 'ResNet116',
+__all__ = ['ResNet8', 'ResNet20', 'ResNet26', 'ResNet32', 'ResNet38', 'ResNet44', 'ResNet56', 'ResNet62', 'ResNet101', 'ResNet119',
            'ResNet164', 'ResNet272', 'ResNet326', 'ResNet650', 'ResNet65']
 
 
@@ -465,7 +465,7 @@ class ResNet65:
     curve = ResNetCurve
     kwargs = {'depth': 65}  
 
-class ResNet116:
+class ResNet119:
     base = ResNetBase
     curve = ResNetCurve
-    kwargs = {'depth': 116}
+    kwargs = {'depth': 119}
