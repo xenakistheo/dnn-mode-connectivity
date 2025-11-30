@@ -1,0 +1,24 @@
+1.
+Peak Height along low loss path. 
+This is the 'maximum loss - minimum loss' along a low loss path. 
+
+2. 
+Hessian (k- largest eigenvalues) of 
+This is the curvature normal to the low loss path. Essentially asking, are we in the grand-canyon 
+
+3. 
+Choice of path. How big is the curve. 
+
+4. 
+Peak height of convex combination between endpoints.
+
+
+Maybe sample for 30 ish points per curve. 
+
+Would be very nice with a plot as in Garipov.
+
+Repeatability - maybe rerun experiments one or two more times with different seeds. 
+
+Perhaps do Cifar100 first and then Cifar10. 
+
+
