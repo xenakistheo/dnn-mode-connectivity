@@ -10,7 +10,7 @@ import curves
 
 
 
-__all__ = ['ResNet20', 'ResNet32', 'ResNet44', 'ResNet56', 'ResNet101',
+__all__ = ['ResNet8', 'ResNet20', 'ResNet26', 'ResNet32', 'ResNet38', 'ResNet44', 'ResNet56', 'ResNet62', 'ResNet101', 'ResNet116'
            'ResNet164', 'ResNet272', 'ResNet326', 'ResNet650']
 
 
