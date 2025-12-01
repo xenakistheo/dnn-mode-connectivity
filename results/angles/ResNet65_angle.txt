@@ -1,0 +1,8 @@
+=== Angle at C between A and B ===
+number of parameters concatenated: 650,554
+||A - C||        = 5.040259e+01
+||B - C||        = 4.995597e+01
+dot((A-C),(B-C)) = 1.374592e+03
+cosine similarity = 5.459257e-01
+angle (rad)      = 9.933027e-01
+angle (deg)      = 56.912052
