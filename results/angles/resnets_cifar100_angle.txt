@@ -1,0 +1,41 @@
+ResNet8 - CIFAR100
+=== Angle at C between A and B ===
+number of parameters concatenated: 81,556
+||A - C||        = 5.872358e+01
+||B - C||        = 5.981335e+01
+dot((A-C),(B-C)) = 1.158219e+03
+cosine similarity = 3.297465e-01
+angle (rad)      = 1.234761e+00
+angle (deg)      = 70.746611
+
+
+ResNet26 - CIFAR100
+=== Angle at C between A and B ===
+number of parameters concatenated: 374,548
+||A - C||        = 7.624537e+01
+||B - C||        = 7.802316e+01
+dot((A-C),(B-C)) = 2.154841e+03
+cosine similarity = 3.622249e-01
+angle (rad)      = 1.200143e+00
+angle (deg)      = 68.763103
+
+
+ResNet38 - CIFAR100
+=== Angle at C between A and B ===
+number of parameters concatenated: 569,876
+||A - C||        = 8.579421e+01
+||B - C||        = 8.468199e+01
+dot((A-C),(B-C)) = 2.463674e+03
+cosine similarity = 3.391050e-01
+angle (rad)      = 1.224831e+00
+angle (deg)      = 70.177646
+
+ResNet65 - CIFAR100
+=== Angle at C between A and B ===
+number of parameters concatenated: 673,684
+||A - C||        = 7.044422e+01
+||B - C||        = 7.294723e+01
+dot((A-C),(B-C)) = 2.097129e+03
+cosine similarity = 4.081041e-01
+angle (rad)      = 1.150420e+00
+angle (deg)      = 65.914206
