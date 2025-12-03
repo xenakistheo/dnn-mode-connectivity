@@ -46,12 +46,12 @@ import curves
 import utils
 
 # ----------------- Globals you can tune -----------------
-NUM_POINTS = 61            # number of points along curve to evaluate loss/accuracy/gap
-HESSIAN_K = 3              # number of points along curve to compute Hessian metrics (evenly spaced)
+NUM_POINTS = 21            # number of points along curve to evaluate loss/accuracy/gap
+HESSIAN_K = NUM_POINTS     # number of points along curve to compute Hessian metrics (evenly spaced)
 HESSIAN_BATCH_SIZE = 128   # batch size used for Hessian computations
 HUTCHINSON_SAMPLES = 20    # number of Hutchinson probe vectors
-POWER_ITERS = 20           # power iteration iterations for top eigenvalue
-HV_BATCHES = 1             # number of minibatches to average over during Hutchinson
+POWER_ITERS = 12           # power iteration iterations for top eigenvalue
+HV_BATCHES = 8             # number of minibatches to average over during Hutchinson
 # --------------------------------------------------------
 
 def parse_args():
@@ -156,6 +156,38 @@ def hutchinson_trace_estimate(base_model, data_loader, criterion, device,
     # scale by total parameter dimension if you prefer absolute trace (v·Hv is already unbiased for trace)
     return trace_est
 
+def compute_eigenvalue_estimate(v, data_loader, base_model, params, criterion, hv_batches, device):
+    hv_acc = torch.zeros_like(v)
+    data_iter = iter(data_loader)
+    for b in range(hv_batches):
+        try:
+            inputs, targets = next(data_iter)
+        except StopIteration:
+            data_iter = iter(data_loader)
+            inputs, targets = next(data_iter)
+
+        inputs = inputs.to(device, non_blocking=True)
+        targets = targets.to(device, non_blocking=True)
+
+        base_model.zero_grad()
+        outputs = base_model(inputs)
+        loss = criterion(outputs, targets)
+        grads = torch.autograd.grad(loss, params, create_graph=True, retain_graph=True)
+
+        hv_flat = hvp_from_grads_and_vector(grads, params, v)
+        hv_acc += hv_flat
+
+    # final eigenvalue estimate: lambda = v^T H v
+    # compute H v one more time (averaged)
+    hv = hv_acc / float(hv_batches)
+    eigenvalue_estimate = (v * hv).sum().item()
+    hv_norm = hv.norm()
+    if hv_norm.item() == 0:
+        return 0.0, 0.0
+    v_next = hv.detach() / hv_norm
+
+    return v_next, eigenvalue_estimate
+
 def power_iteration_top_eigenvalue(base_model, data_loader, criterion, device,
                                    power_iters=20, hv_batches=1):
     """Estimate top eigenvalue using power iteration with Hessian-vector products (single-run).
@@ -170,50 +202,100 @@ def power_iteration_top_eigenvalue(base_model, data_loader, criterion, device,
     data_iter = iter(data_loader)
 
     for it in range(power_iters):
-        # compute H v (averaged over hv_batches batches)
-        hv_acc = torch.zeros_like(v)
+        v, eigenvalue_estimate = compute_eigenvalue_estimate(v, data_loader, base_model, params, criterion, hv_batches, device)
+
+    return float(eigenvalue_estimate)
+
+def block_power_iteration_top_k_eigenvalues(base_model, data_loader, criterion, device,
+                                           k=5, power_iters=20, hv_batches=1):
+    """Estimate top k eigenvalues using Block Power Iteration with HVP.
+    Returns: top_k_eigenvalues (list of floats)
+    """
+    base_model.eval()
+    params = [p for p in base_model.parameters() if p.requires_grad]
+    param_dim = sum(p.numel() for p in params)
+    data_iter = iter(data_loader)
+
+    # Initialize V: a block of k random vectors (D x k matrix)
+    V = torch.randn(param_dim, k, device=device, dtype=torch.float32)
+
+    for it in range(power_iters):
+        # 1. Compute H V (Hessian applied to all k vectors)
+        HV = torch.zeros_like(V)
+
+        # We need to average H V over hv_batches mini-batches
         for b in range(hv_batches):
             try:
                 inputs, targets = next(data_iter)
             except StopIteration:
                 data_iter = iter(data_loader)
                 inputs, targets = next(data_iter)
+
             inputs = inputs.to(device, non_blocking=True)
             targets = targets.to(device, non_blocking=True)
-            base_model.zero_grad()
-            outputs = base_model(inputs)
-            loss = criterion(outputs, targets)
-            grads = torch.autograd.grad(loss, params, create_graph=True, retain_graph=True)
-            hv_flat = hvp_from_grads_and_vector(grads, params, v)
-            hv_acc += hv_flat
-        hv = hv_acc / float(hv_batches)
-        # update v
-        v = hv.detach()
-        v_norm = v.norm()
-        if v_norm.item() == 0:
-            return 0.0
-        v = v / v_norm
-    # final eigenvalue estimate: lambda = v^T H v
-    # compute H v one more time (averaged)
-    hv_acc = torch.zeros_like(v)
-    data_iter = iter(data_loader)
+
+            # Compute H v for each of the k vectors in the block
+            batch_HV = torch.zeros_like(V)
+            for j in range(k):
+                v_flat = V[:, j] # j-th column is the j-th vector
+                base_model.zero_grad()
+                outputs = base_model(inputs)
+                loss = criterion(outputs, targets)
+                grads = torch.autograd.grad(loss, params, create_graph=True, retain_graph=True)
+
+                # hvp_from_grads_and_vector computes H @ v_flat
+                hvp_flat = hvp_from_grads_and_vector(grads, params, v_flat)
+                batch_HV[:, j] = hvp_flat.detach()
+
+            HV += batch_HV
+
+        HV /= float(hv_batches)
+
+        # 2. Orthonormalize the block V using QR decomposition
+        # This prevents the columns of V from collapsing onto the top eigenvector
+        Q, _ = torch.linalg.qr(HV)
+        V = Q
+
+    # Final estimate of top k eigenvalues (Ritz values)
+    # The eigenvalues are approximated by the eigenvalues of the k x k matrix V^T @ H @ V
+
+    # Compute the final averaged H V using the orthonormal basis V
+    Final_HV = torch.zeros_like(V)
+    data_iter = iter(data_loader) # Restart iterator for final average
     for b in range(hv_batches):
         try:
             inputs, targets = next(data_iter)
         except StopIteration:
             data_iter = iter(data_loader)
             inputs, targets = next(data_iter)
+
         inputs = inputs.to(device, non_blocking=True)
         targets = targets.to(device, non_blocking=True)
-        base_model.zero_grad()
-        outputs = base_model(inputs)
-        loss = criterion(outputs, targets)
-        grads = torch.autograd.grad(loss, params, create_graph=True, retain_graph=True)
-        hv_flat = hvp_from_grads_and_vector(grads, params, v)
-        hv_acc += hv_flat
-    hv = hv_acc / float(hv_batches)
-    lambda_est = (v * hv).sum().item()
-    return float(lambda_est)
+
+        batch_Final_HV = torch.zeros_like(V)
+        for j in range(k):
+            v_flat = V[:, j]
+            base_model.zero_grad()
+            outputs = base_model(inputs)
+            loss = criterion(outputs, targets)
+            grads = torch.autograd.grad(loss, params, create_graph=True, retain_graph=True)
+            hvp_flat = hvp_from_grads_and_vector(grads, params, v_flat)
+            batch_Final_HV[:, j] = hvp_flat.detach()
+
+        Final_HV += batch_Final_HV
+
+    Final_HV /= float(hv_batches)
+
+    # Calculate the k x k matrix A_k = V^T @ H @ V
+    A_k = V.transpose(0, 1) @ Final_HV
+
+    # Find the eigenvalues of the small k x k matrix A_k
+    eigenvalues = torch.linalg.eigvalsh(A_k) # eigvalsh for symmetric matrix
+
+    # Return the top k (largest) eigenvalues
+    top_k_eigenvalues = eigenvalues.flip(0).tolist() # Sort descending
+
+    return top_k_eigenvalues
 
 # ----------------- Main analysis -----------------
 def main():
@@ -295,6 +377,7 @@ def main():
     hess_ts = np.linspace(0.0, 1.0, HESSIAN_K)
     hess_lambda = np.zeros(HESSIAN_K)
     hess_trace = np.zeros(HESSIAN_K)
+    hess_topk = np.zeros((HESSIAN_K, 5))
 
     # Prepare a small data loader for Hessian estimation (use training loader but with smaller batch size)
     # We'll sample from the training DataLoader; create a DataLoader with HESSIAN_BATCH_SIZE
@@ -346,19 +429,27 @@ def main():
         hess_trace[k_idx] = trace_est
 
         # power iteration for largest eigenvalue
+        # start = time.time()
+        # lambda_est = power_iteration_top_eigenvalue(base_model, hess_loader, criterion, device,
+        #                                             power_iters=POWER_ITERS, hv_batches=HV_BATCHES)
+        # end = time.time()
+        # print(f"hess t={tval:.3f} lambda_max ≈ {lambda_est:.6e} (time {end-start:.1f}s)")
+        # hess_lambda[k_idx] = lambda_est
+
+        # power iteration for top k eigenvalues
         start = time.time()
-        lambda_est = power_iteration_top_eigenvalue(base_model, hess_loader, criterion, device,
-                                                    power_iters=POWER_ITERS, hv_batches=HV_BATCHES)
+        topk_est = block_power_iteration_top_k_eigenvalues(base_model, hess_loader, criterion, device,
+                                                             power_iters=POWER_ITERS, hv_batches=HV_BATCHES)
         end = time.time()
-        print(f"hess t={tval:.3f} lambda_max ≈ {lambda_est:.6e} (time {end-start:.1f}s)")
-        hess_lambda[k_idx] = lambda_est
+        print(f"hess t={tval:.3f} topk[0] ≈ {topk_est[0]:.6e} (time {end-start:.1f}s)")
+        hess_topk[k_idx, :] = topk_est
 
     # Save results
     out_path = os.path.join(out_dir, 'curve_hessian.npz')
     np.savez(out_path,
              ts=ts, tr_nll=tr_nll, te_nll=te_nll, tr_loss=tr_loss, te_loss=te_loss,
              tr_acc=tr_acc, te_acc=te_acc, gen_gap=gen_gap,
-             hess_ts=hess_ts, hess_lambda=hess_lambda, hess_trace=hess_trace)
+             hess_ts=hess_ts, hess_lambda=hess_lambda, hess_trace=hess_trace, hess_topk=hess_topk)
     print("Saved results to", out_path)
 
     # Print concise summaries
