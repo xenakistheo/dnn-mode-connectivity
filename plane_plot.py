@@ -8,15 +8,41 @@ import seaborn as sns
 
 parser = argparse.ArgumentParser(description='Plane visualization')
 parser.add_argument('--dir', type=str, default='/tmp/curve/', metavar='DIR',
-                    help='training directory (default: None)')
-
+                    help='training directory (default: None). Can be a directory containing plane.npz or the full path to plane.npz')
+parser.add_argument('--no-usetex', action='store_true',
+                    help='Disable matplotlib usetex even if available (useful if no TeX installed).')
 args = parser.parse_args()
 
-file = np.load(os.path.join(args.dir, 'plane.npz'))
+# Accept either a directory or a direct .npz file path
+if os.path.isdir(args.dir):
+    npz_path = os.path.join(args.dir, 'plane.npz')
+elif os.path.isfile(args.dir) and args.dir.lower().endswith('.npz'):
+    npz_path = args.dir
+else:
+    candidate = os.path.normpath(args.dir)
+    if os.path.isfile(candidate):
+        npz_path = candidate
+    else:
+        raise FileNotFoundError(f"Could not find plane.npz. Checked: {args.dir} and {os.path.join(args.dir, 'plane.npz')}")
 
-matplotlib.rc('text', usetex=True)
-matplotlib.rc('text.latex', preamble=[r'\usepackage{sansmath}', r'\sansmath'])
-matplotlib.rc('font', **{'family':'sans-serif','sans-serif':['DejaVu Sans']})
+file = np.load(npz_path)
+
+# Try to enable LaTeX rendering, but fall back safely if it fails or user requested no-usetex.
+if args.no_usetex:
+    matplotlib.rc('text', usetex=False)
+    matplotlib.rc('font', **{'family': 'sans-serif', 'sans-serif': ['DejaVu Sans']})
+else:
+    try:
+        # Enable usetex and set a preamble. matplotlib expects a string for the preamble.
+        matplotlib.rc('text', usetex=True)
+        # Provide preamble as a single string (not a list) to avoid ValueError.
+        matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{sansmath}\sansmath'
+        matplotlib.rc('font', **{'family': 'sans-serif', 'sans-serif': ['DejaVu Sans']})
+    except Exception as e:
+        # If enabling usetex fails (no TeX installed or rc param types incompatible), fall back.
+        print("Warning: enabling usetex failed; falling back to usetex=False. Reason:", e)
+        matplotlib.rc('text', usetex=False)
+        matplotlib.rc('font', **{'family': 'sans-serif', 'sans-serif': ['DejaVu Sans']})
 
 matplotlib.rc('xtick.major', pad=12)
 matplotlib.rc('ytick.major', pad=12)
@@ -59,9 +85,11 @@ def plane(grid, values, vmax=None, log_alpha=-5, N=7, cmap='jet_r'):
                             alpha=0.55)
     colorbar = plt.colorbar(format='%.2g')
     labels = list(colorbar.ax.get_yticklabels())
-    labels[-1].set_text(r'$>\,$' + labels[-2].get_text())
-    colorbar.ax.set_yticklabels(labels)
+    if len(labels) >= 2:
+        labels[-1].set_text(r'$>\,$' + labels[-2].get_text())
+        colorbar.ax.set_yticklabels(labels)
     return contour, contourf, colorbar
+
 
 plt.figure(figsize=(12.4, 7))
 
@@ -85,7 +113,8 @@ plt.margins(0.0)
 plt.yticks(fontsize=18)
 plt.xticks(fontsize=18)
 colorbar.ax.tick_params(labelsize=18)
-plt.savefig(os.path.join(args.dir, 'train_loss_plane.pdf'), format='pdf', bbox_inches='tight')
+out_dir = os.path.dirname(npz_path) if os.path.isfile(npz_path) else args.dir
+plt.savefig(os.path.join(out_dir, 'train_loss_plane.pdf'), format='pdf', bbox_inches='tight')
 plt.show()
 
 plt.figure(figsize=(12.4, 7))
@@ -110,5 +139,5 @@ plt.margins(0.0)
 plt.yticks(fontsize=18)
 plt.xticks(fontsize=18)
 colorbar.ax.tick_params(labelsize=18)
-plt.savefig(os.path.join(args.dir, 'test_error_plane.pdf'), format='pdf', bbox_inches='tight')
+plt.savefig(os.path.join(out_dir, 'test_error_plane.pdf'), format='pdf', bbox_inches='tight')
 plt.show()
