@@ -1,0 +1,1 @@
+train.py --dir=/content/drive/MyDrive/mode_connectivity_runs/ResNet8_CIFAR100_EP_2 --dataset=CIFAR100 --data_path=./data --transform=ResNet --model=ResNet8 --epochs=80 --lr=0.1 --wd=3e-4 --save_freq=40 --use_test --seed=2
