@@ -29,6 +29,8 @@ Notes
     - Ask me and I can modify this script to interpolate curve-format checkpoints directly.
 - Use --recompute_bn to refresh BatchNorm running_mean/var using data from the train loader. This usually improves evaluation accuracy for interpolated models.
 """
+
+
 import argparse
 import os
 import sys
@@ -40,13 +42,11 @@ import data
 import models
 import utils
 
-
 def load_model_state(path):
     ckpt = torch.load(path, map_location='cpu')
     if isinstance(ckpt, dict) and 'model_state' in ckpt:
         return ckpt['model_state']
     return ckpt
-
 
 def interp_state_dict(stateA, stateB, reference_state, t):
     new_state = {}
@@ -79,7 +79,6 @@ def interp_state_dict(stateA, stateB, reference_state, t):
             new_state[k] = (1.0 - t) * a + t * b
     return new_state
 
-
 def recompute_bn_stats(model, train_loader, device, max_batches=200):
     """
     Recompute running_mean/var for BatchNorm layers by forwarding data in train mode.
@@ -98,7 +97,6 @@ def recompute_bn_stats(model, train_loader, device, max_batches=200):
             if seen >= max_batches:
                 break
     model.eval()
-
 
 def eval_on_loader(model, loader, device, criterion):
     """
@@ -129,7 +127,6 @@ def eval_on_loader(model, loader, device, criterion):
         'accuracy': correct * 100.0 / total,
     }
 
-
 def detect_device(preferred):
     # preferred can be 'auto' or explicit 'cpu','cuda','mps'
     if preferred and preferred != 'auto':
@@ -141,13 +138,14 @@ def detect_device(preferred):
         return torch.device('cuda')
     return torch.device('cpu')
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ckpt_a', required=True, help='checkpoint A (path)')
     parser.add_argument('--ckpt_b', required=True, help='checkpoint B (path)')
     parser.add_argument('--model', required=True, help='model name (same as used for training)')
-    parser.add_argument('--dataset', default='CIFAR10')
+    # --- changed line below: force upper-case and choices ---
+    parser.add_argument('--dataset', default='CIFAR10', choices=['CIFAR10', 'CIFAR100'],
+                        help="Dataset to use: CIFAR10 or CIFAR100")
     parser.add_argument('--data_path', default=None)
     parser.add_argument('--transform', default='VGG')
     parser.add_argument('--batch_size', type=int, default=128)
@@ -165,8 +163,10 @@ def main():
     device = detect_device(args.device)
     print("Using device:", device)
 
+    # --- Pass dataset argument as forced upper-case, rest untouched ---
+    dataset_name = args.dataset.upper()
     loaders, num_classes = data.loaders(
-        args.dataset,
+        dataset_name,
         args.data_path,
         args.batch_size,
         args.num_workers,
@@ -192,7 +192,6 @@ def main():
     for t in ts:
         print(f"\n=== t = {t:.4f} ===")
         new_state = interp_state_dict(stateA, stateB, base_model.state_dict(), float(t))
-        # load and move the model to the chosen device
         base_model.load_state_dict(new_state, strict=False)
         base_model.to(device)
 
@@ -200,7 +199,6 @@ def main():
             print("Recomputing BatchNorm running stats on train loader...")
             recompute_bn_stats(base_model, loaders['train'], device, max_batches=args.bn_batches)
 
-        # Evaluate using device-aware loop
         test_res = eval_on_loader(base_model, loaders['test'], device, F.cross_entropy)
         print(f"t={t:.4f}  test_nll: {test_res['nll']:.4f}  test_acc: {test_res['accuracy']:.4f}")
         results.append({'t': float(t), 'nll': float(test_res['nll']), 'accuracy': float(test_res['accuracy'])})
@@ -219,7 +217,6 @@ def main():
     print("\nDone. Summary:")
     for r in results:
         print(f" t={r['t']:.4f}  acc={r['accuracy']:.4f}  nll={r['nll']:.4f}")
-
 
 if __name__ == '__main__':
     main()
