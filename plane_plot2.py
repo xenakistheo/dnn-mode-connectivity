@@ -6,14 +6,14 @@ import os
 import seaborn as sns
 
 paths = [
-    #"./plane_data/ResNet8_CIFAR10_Bezier/plane.npz",
+    "./plane_data/ResNet8_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet26_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet38_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet65_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet119_CIFAR10_Bezier/plane.npz"
 ]
 
-resnet_labels = ["ResNet26", "ResNet38", "ResNet65", "ResNet119"]
+resnet_labels = ["ResNet8", "ResNet26", "ResNet38", "ResNet65", "ResNet119"]
 
 out_dir = os.path.dirname(paths[0])
 
