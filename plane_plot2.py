@@ -86,10 +86,6 @@ def plane(grid, values, vmax=None, log_alpha=-5, N=7, cmap='jet_r', ax=None):
 # --------------------------------------------------------------------
 
 def make_figure(data_key, title, vmax, log_alpha, filename):
-    
-    # Load first file to get the common grid
-    first_file = np.load(paths[0])
-    common_grid = first_file["grid"]
 
     fig, axes = plt.subplots(5, 1, figsize=(12.4, 5 * 4.5))
 
@@ -99,9 +95,9 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         file = np.load(npz_path)
         ax = axes[i]
 
-        # Use the common grid for all plots instead of individual grids
+        # Use each file's own grid
         contour, contourf = plane(
-            common_grid,  # Use common grid instead of file["grid"]
+            file["grid"],
             file[data_key],
             vmax=vmax,
             log_alpha=log_alpha,
@@ -125,6 +121,11 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         # Remove ticks
         ax.set_xticks([])
         ax.set_yticks([])
+        
+        # Set limits to exactly the data range (no whitespace)
+        grid = file["grid"]
+        ax.set_xlim(grid[:, :, 0].min(), grid[:, :, 0].max())
+        ax.set_ylim(grid[:, :, 1].min(), grid[:, :, 1].max())
         
         ax.margins(0.0)
         ax.set_title(label, fontsize=16)
