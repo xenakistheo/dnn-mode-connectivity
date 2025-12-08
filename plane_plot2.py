@@ -6,14 +6,14 @@ import os
 import seaborn as sns
 
 paths = [
-    "./plane_data/ResNet8_CIFAR10_Bezier/plane.npz",
+    #"./plane_data/ResNet8_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet26_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet38_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet65_CIFAR10_Bezier/plane.npz",
     "./plane_data/ResNet119_CIFAR10_Bezier/plane.npz"
 ]
 
-resnet_labels = ["ResNet8", "ResNet26", "ResNet38", "ResNet65", "ResNet119"]
+resnet_labels = ["ResNet26", "ResNet38", "ResNet65", "ResNet119"]
 
 out_dir = os.path.dirname(paths[0])
 
@@ -86,8 +86,12 @@ def plane(grid, values, vmax=None, log_alpha=-5, N=7, cmap='jet_r', ax=None):
 # --------------------------------------------------------------------
 
 def make_figure(data_key, title, vmax, log_alpha, filename):
+    
+    # Load first file to get the common grid
+    first_file = np.load(paths[0])
+    common_grid = first_file["grid"]
 
-    fig, axes = plt.subplots(5, 1, figsize=(12.4, 5 * 4.5), sharex=True, sharey=True)
+    fig, axes = plt.subplots(5, 1, figsize=(12.4, 5 * 4.5))
 
     last_cf = None
 
@@ -95,8 +99,9 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         file = np.load(npz_path)
         ax = axes[i]
 
+        # Use the common grid for all plots instead of individual grids
         contour, contourf = plane(
-            file["grid"],
+            common_grid,  # Use common grid instead of file["grid"]
             file[data_key],
             vmax=vmax,
             log_alpha=log_alpha,
@@ -117,16 +122,18 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         ax.plot(bend_coordinates[[0, 2], 0], bend_coordinates[[0, 2], 1],
                 c='k', linestyle='--', dashes=(3, 4), linewidth=3, zorder=2)
 
+        # Remove ticks
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
         ax.margins(0.0)
-        ax.tick_params(axis='both', labelsize=14)
         ax.set_title(label, fontsize=16)
 
     # ---- Title above everything ----
     fig.suptitle(title, fontsize=20, y=0.97)
 
     # ---- Create horizontal colorbar ABOVE subplots, centered ----
-    # [left, bottom, width, height] in figure coordinates
-    cax = fig.add_axes([0.25, 0.92, 0.5, 0.018])  # adjust as needed
+    cax = fig.add_axes([0.25, 0.92, 0.5, 0.018])
 
     cbar = fig.colorbar(last_cf, cax=cax, orientation='horizontal', format='%.2g')
     cbar.ax.tick_params(labelsize=14)
