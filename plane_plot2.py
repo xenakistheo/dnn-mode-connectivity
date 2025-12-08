@@ -125,6 +125,8 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         ax.margins(0.0)
         ax.set_title(label, fontsize=24, fontweight='bold')
         ax.grid(True, alpha=0.3, linewidth=0.5)
+        ax.set_xticks([])
+        ax.set_yticks([])
         
         # Add legend to first subplot only
         if i == 0:
@@ -145,10 +147,11 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
         labels = [f"{t:.2g}" for t in ticks]
         labels[-1] = r">$\,{}$".format(labels[-2])
         cbar.ax.set_xticklabels(labels)
+    
 
     # ---- Adjust layout to prevent overlap ----
     fig.tight_layout(rect=[0, 0, 1, 0.90])
-
+    fig.subplots_adjust(hspace=0.3)  # 
     # ---- Save ----
     fig.savefig(os.path.join(out_dir, filename), format="pdf", bbox_inches="tight")
     plt.show()
