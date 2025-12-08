@@ -111,27 +111,27 @@ def make_figure(data_key, title, vmax, log_alpha, filename):
 
         ax.scatter(bend_coordinates[[0, 2], 0], bend_coordinates[[0, 2], 1],
                    marker='o', c='k', s=120, zorder=2)
-        ax.scatter(bend_coordinates[1, 0], bend_coordinates[1, 1],
-                   marker='D', c='k', s=120, zorder=2)
+        # Diamond point removed
         ax.plot(curve_coordinates[:, 0], curve_coordinates[:, 1],
-                linewidth=4, c='k', zorder=4)
+                linewidth=4, c='k', zorder=4, label='Bézier')
         ax.plot(bend_coordinates[[0, 2], 0], bend_coordinates[[0, 2], 1],
-                c='k', linestyle='--', dashes=(3, 4), linewidth=3, zorder=2)
+                c='k', linestyle='--', dashes=(3, 4), linewidth=3, zorder=2, label='Linear Interpolation')
 
-        # Remove ticks
-        ax.set_xticks([])
-        ax.set_yticks([])
-        
         # Set limits to exactly the data range (no whitespace)
         grid = file["grid"]
         ax.set_xlim(grid[:, :, 0].min(), grid[:, :, 0].max())
         ax.set_ylim(grid[:, :, 1].min(), grid[:, :, 1].max())
         
         ax.margins(0.0)
-        ax.set_title(label, fontsize=16)
+        ax.set_title(label, fontsize=24, fontweight='bold')
+        ax.grid(True, alpha=0.3, linewidth=0.5)
+        
+        # Add legend to first subplot only
+        if i == 0:
+            ax.legend(loc='upper right', fontsize=18, framealpha=0.9)
 
     # ---- Title above everything ----
-    fig.suptitle(title, fontsize=20, y=0.97)
+    #fig.suptitle(title, fontsize=20, y=0.97)
 
     # ---- Create horizontal colorbar ABOVE subplots, centered ----
     cax = fig.add_axes([0.25, 0.92, 0.5, 0.018])
