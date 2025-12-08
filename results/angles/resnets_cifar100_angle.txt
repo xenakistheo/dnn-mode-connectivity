@@ -39,3 +39,13 @@ dot((A-C),(B-C)) = 2.097129e+03
 cosine similarity = 4.081041e-01
 angle (rad)      = 1.150420e+00
 angle (deg)      = 65.914206
+
+ResNet119 - CIFAR100
+=== Angle at C between A and B ===
+number of parameters concatenated: 1,238,164
+||A - C||        = 7.792171e+01
+||B - C||        = 7.833195e+01
+dot((A-C),(B-C)) = 2.661927e+03
+cosine similarity = 4.361126e-01
+angle (rad)      = 1.119522e+00
+angle (deg)      = 64.143888
