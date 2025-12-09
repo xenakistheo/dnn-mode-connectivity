@@ -538,7 +538,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>4.2 Barrier Height</h2>
-			The table below shows that smaller networks experienced large dips in accuracy when 
+			The tables below shows that smaller networks experienced large dips in accuracy when 
 			moving along the low-loss path, whereas larger networks were much more stable. 
 			For example, ResNet-8 lost more than 7% test accuracy at its worst point, while 
 			ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider 
@@ -605,80 +605,47 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 						<h2>4.3 Angle</h2>
 			The table below reports the interior angle ∠ACB for each model on the two datasets, as
 			well as the distance between the path midpoint C, and the endpoints A, B. 
-            <table class="results">
-              <tr>
-                <th>Model</th>
-                <th>||A-C||₂</th>
-                <th>||B-C||₂</th>
-                <th>∠ACB (deg)</th>
-              </tr>
-              <tr>
-                <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-10</b></td>
-              </tr>
-              <tr>
-                <td>ResNet-8</td>
-                <td>38.75</td>
-                <td>38.69</td>
-                <td>69.39</td>
-              </tr>
-              <tr>
-                <td>ResNet-26</td>
-                <td>49.16</td>
-                <td>48.49</td>
-                <td>62.31</td>
-              </tr>
-              <tr>
-                <td>ResNet-38</td>
-                <td>49.78</td>
-                <td>53.37</td>
-                <td>62.78</td>
-              </tr>
-              <tr>
-                <td>ResNet-65</td>
-                <td>50.40</td>
-                <td>49.96</td>
-                <td>56.91</td>
-              </tr>
-              <tr>
-                <td>ResNet-119</td>
-                <td>51.89</td>
-                <td>54.48</td>
-                <td>55.16</td>
-              </tr>
-              <tr>
-                <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-100</b></td>
-              </tr>
-              <tr>
-                <td>ResNet-8</td>
-                <td>58.72</td>
-                <td>59.81</td>
-                <td>70.75</td>
-              </tr>
-              <tr>
-                <td>ResNet-26</td>
-                <td>76.25</td>
-                <td>78.02</td>
-                <td>68.76</td>
-              </tr>
-              <tr>
-                <td>ResNet-38</td>
-                <td>85.79</td>
-                <td>84.68</td>
-                <td>70.18</td>
-              </tr>
-              <tr>
-                <td>ResNet-65</td>
-                <td>70.44</td>
-                <td>72.95</td>
-                <td>65.91</td>
-              </tr>
-              <tr>
-                <td>ResNet-119</td>
-                <td>77.92</td>
-                <td>78.33</td>
-                <td>64.14</td>
-              </tr>
-            </table><br>
+            
+			<div style="display: flex; gap: 20px;">
+
+  <!-- CIFAR-10 TABLE -->
+  <table class="results" style="border-collapse: collapse; width: 45%;">
+    <tr>
+      <th>Model</th>
+      <th>||A-C||₂</th>
+      <th>||B-C||₂</th>
+      <th>∠ACB (deg)</th>
+    </tr>
+    <tr>
+      <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-10</b></td>
+    </tr>
+    <tr><td>ResNet-8</td><td>38.75</td><td>38.69</td><td>69.39</td></tr>
+    <tr><td>ResNet-26</td><td>49.16</td><td>48.49</td><td>62.31</td></tr>
+    <tr><td>ResNet-38</td><td>49.78</td><td>53.37</td><td>62.78</td></tr>
+    <tr><td>ResNet-65</td><td>50.40</td><td>49.96</td><td>56.91</td></tr>
+    <tr><td>ResNet-119</td><td>51.89</td><td>54.48</td><td>55.16</td></tr>
+  </table>
+
+  <!-- CIFAR-100 TABLE -->
+  <table class="results" style="border-collapse: collapse; width: 45%;">
+    <tr>
+      <th>Model</th>
+      <th>||A-C||₂</th>
+      <th>||B-C||₂</th>
+      <th>∠ACB (deg)</th>
+    </tr>
+    <tr>
+      <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-100</b></td>
+    </tr>
+    <tr><td>ResNet-8</td><td>58.72</td><td>59.81</td><td>70.75</td></tr>
+    <tr><td>ResNet-26</td><td>76.25</td><td>78.02</td><td>68.76</td></tr>
+    <tr><td>ResNet-38</td><td>85.79</td><td>84.68</td><td>70.18</td></tr>
+    <tr><td>ResNet-65</td><td>70.44</td><td>72.95</td><td>65.91</td></tr>
+    <tr><td>ResNet-119</td><td>77.92</td><td>78.33</td><td>64.14</td></tr>
+  </table>
+
+</div>
+
 
             Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
 			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
