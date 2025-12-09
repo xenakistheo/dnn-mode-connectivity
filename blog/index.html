@@ -157,7 +157,7 @@
           </div>
 				</div>
 		    <div class="main-content-block">
-						<h1>1. Introduction</h1>
+						<h3>1. Introduction</h3>
             It is widely accepted that overparameterization plays a central role in the remarkable generalization capabilities of modern deep neural networks. Specifically, increasing model capacity leads to
 loss landscapes characterized by numerous flat valleys or basins, each corresponding to similarly
 low loss. A central feature of these landscapes is <strong>mode connectivity</strong>: the phenomenon in which
@@ -214,10 +214,9 @@ more principled design and training strategies of deep learning models.
 				<br>
 				<li><b>Increased Overparameterization Correlates with Flatter Minima</b> <br>As the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.</li>
 				<br>
-				<li><b>Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.</li>
+				<li><b>Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation will exist between the geometric properties (low barrier height, low curvature, low sharpness) of the low-loss paths and the final test accuracy of the models, thereby providing a useful predictor for generalization performance beyond training loss alone.</li>
 			</ul>
 
-            
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -227,7 +226,7 @@ more principled design and training strategies of deep learning models.
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-						<h1>2. Background</h1>
+						<h3>2. Background</h3>
 					  Empirical and theoretical studies have demonstrated that wider networks tend to exhibit mode connectivity: where distinct minima are connected by a smooth, low-loss path <a href="#ref_1">[1, 2]</a>. These networks tend to occupy regions of the loss landscape that are smoother, with shorter and less pronounced barriers between minima. This characteristic suggests that wider models, by virtue of their increased parameterization, might allow for greater flexibility in optimization, potentially leading to more robust solutions.<br><br>
 
             However, most prior work has focused on the existence of connectivity, rather than the <em>geometry</em> of these connections. In particular, even fewer studies have measured how landscape properties, such as barrier height and path sharpness, vary not just within one path, but across varying architectural factors like depth in practical deep learning settings on real datasets (e.g., ResNet or CNNs on CIFAR-10).<br><br>
@@ -236,12 +235,9 @@ more principled design and training strategies of deep learning models.
 
             The collective body of existing research confirms the central role of overparameterization in shaping the loss landscape <a href="#ref_6">[6, 7]</a>. It has been established that the set of optimal solutions in networks where the number of parameters significantly exceeds the number of data points is not discrete but rather forms a high-dimensional submanifold <a href="#ref_8">[8, 9]</a>. Awareness of this phenomenon fundamentally changes the optimization challenge. Finding a good solution requires finding not only low-loss minimum, but also a minimum that generalizes well, a property not reflected in the loss itself. This has motivated work to study the effect of hyperparameters such as learning rate and batch size on the width of the minima that stochastic gradient descent (SGD) converges to <a href="#ref_10">[10]</a>. Furthermore, dedicated flatness-aware optimization strategies, such as sharpness-aware minimization (SAM) <a href="#ref_11">[11]</a> and stochastic weight averaging (SWA) <a href="#ref_12">[12]</a>, have been developed to actively seek out flat minima <a href="#ref_13">[13]</a>.<br><br>
 
-            Furthermore, a substantial area of research has focused on the relationship between optimization and flat minima, hypothesizing that the flatness of a basin correlates directly with a model's superior generalization ability <a href="#ref_14">[14]</a>. However, the connection between these macroscopic landscape properties, like the existence of flat minima, and the microscopic geometry of the connections between them, like path curvature and sharpness, remains loosely quantified, particularly in the context of controlled architectural variations like depth on modern architectures <a href="#ref_6">[6, 7]</a>.<br>
-			Thus, a significant gap remains in rigorously and empirically linking the degree of
-overparameterization to the quantitative geometry of the optimization landscape. This motivates a systematic investigation of how overparameterization shapes the geometry of the loss
-landscape, and how this, in turn, influences key properties like generalization. By studying these aspects in a controlled and thorough manner, we aim to uncover insights that could inform the
-design of more efficient architectures and optimization strategies, ultimately leading to more
-reliable and interpretable models.
+            Furthermore, a substantial area of research has focused on the relationship between optimization and flat minima, hypothesizing that the flatness of a basin correlates directly with a model's superior generalization ability <a href="#ref_14">[14]</a>. However, the connection between these macroscopic landscape properties, like the existence of flat minima, and the microscopic geometry of the connections between them, like path curvature and sharpness, remains loosely quantified, particularly in the context of controlled architectural variations like depth on modern architectures <a href="#ref_6">[6, 7]</a>.<br><br>
+
+			Thus, a significant gap remains in rigorously and empirically linking the degree of overparameterization to the quantitative geometry of the optimization landscape. This motivates a systematic investigation of how overparameterization shapes the geometry of the loss landscape, and how this, in turn, influences key properties like generalization. By studying these aspects in a controlled and thorough manner, we aim to uncover insights that could inform the design of more efficient architectures and optimization strategies, ultimately leading to more reliable and interpretable models.
 		    </div>
 		    <div class="margin-right-block">
 						Flatness-aware optimization strategies like sharpness-aware minimization (SAM) and stochastic weight averaging (SWA) have been developed to actively seek out flat minima.
@@ -252,7 +248,7 @@ reliable and interpretable models.
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-						<h1>3. Methods & Experiments</h1>
+						<h3>3. Methods & Experiments</h3>
 			Before introducing the specific metrics, we briefly summarize the overall 
 			methodology used to
 			generate the objects we evaluated.<br><br>
@@ -277,7 +273,7 @@ to visualize local variations in loss away from the optimized path.<br><br>
             Along each path we evaluated: training and test loss, curvature metrics, maximum barrier height, and generalization gap. This procedure allowed us to compare different architectures not only in terms of whether a low-loss path existed, but also the geometry of it.
 		    </div>
 		    <div class="margin-right-block">
-						The methodology used Bezier curves and piecewise linear paths to connect independently trained models.<br><br><br><br><br>Along each path, loss, curvature, maximum barrier height, and generalization gap was measured. 
+						We used piecewise linear paths and Bezier curves to search for low-loss paths between independently trained models.<br><br><br><br><br>Along each path, loss, curvature, maximum barrier height, and generalization gap was measured. 
 		    </div>
 			
 		</div>
@@ -301,34 +297,31 @@ family keeps the computational cost feasible.</li>
 			We chose ResNets in particular because they were covered in our course and are known to
 outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a>.
 			By spanning more than an order of magnitude in model size, this architectural sweep allowed us to examine how path geometry, barrier height, and generalization evolve as networks transition from moderately to heavily overparameterized regimes.<br><br>
-			The number of parameters in the chosen models can be seen in the table below. 
+			The number of parameters in the chosen models can be seen in the table below.<br><br>
 
-            <table class="results">
-              <tr>
-                <th>Architecture</th>
-                <th>Parameters</th>
-              </tr>
-              <tr>
-                <td>ResNet-8</td>
-                <td>~80k</td>
-              </tr>
-              <tr>
-                <td>ResNet-26</td>
-                <td>~370k</td>
-              </tr>
-              <tr>
-                <td>ResNet-38</td>
-                <td>~570k</td>
-              </tr>
-              <tr>
-                <td>ResNet-65</td>
-                <td>~660k</td>
-              </tr>
-              <tr>
-                <td>ResNet-119</td>
-                <td>~1.2M</td>
-              </tr>
-            </table>
+			<style>
+			table.results {
+				margin: 0 auto;       /* centers table */
+				border-collapse: collapse;
+			}
+			table.results th,
+			table.results td {
+				padding: 8px 12px;
+			}
+			</style>
+
+			<table class="results">
+			<caption style="font-weight: normal; margin-bottom: 8px;">
+				Table 1: Parameter Counts for Selected Architectures
+			</caption>
+			<tr><th>Architecture</th><th>Parameters</th></tr>
+			<tr><td>ResNet-8</td><td>~80k</td></tr>
+			<tr><td>ResNet-26</td><td>~370k</td></tr>
+			<tr><td>ResNet-38</td><td>~570k</td></tr>
+			<tr><td>ResNet-65</td><td>~660k</td></tr>
+			<tr><td>ResNet-119</td><td>~1.2M</td></tr>
+			</table>
+
 		    </div>
 		    <div class="margin-right-block">
 						ResNets were chosen because they outperform plain CNNs on image recognition tasks and have well-studied loss landscapes.
@@ -345,7 +338,7 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
             The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
 		    </div>
 		    <div class="margin-right-block">
-						These datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
+						The CIFAR-10 and CIFAR-100 datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
 		    </div>
 		</div>
 
@@ -414,7 +407,7 @@ insight into how easily solutions can be connected, how much deviation from line
 and how locally stable the solutions are along the path.
 
 
-						<h3>3.6.1 Barrier Height</h3>
+						<h2>3.6.1 Barrier Height</h2>
 			Given a parameterized path between two independently trained models, sampled at N points,
 we define the barrier height as the difference between the maximum and minimum loss observed
 along the path. Intuitively, this measures the “cost” of traveling between two minima: a high
@@ -425,7 +418,7 @@ interpolation between the two endpoints. Barrier height can be evaluated on the 
 test loss, or the generalization gap.
 
 
-				<h3>3.6.2 Angle</h3>
+				<h2>3.6.2 Angle</h2>
 Many curve-based interpolation methods, such as Bezier curves or polychains, introduce a middle
 point that is optimized to minimize loss along the path. The relative position of this middle point
 provides a proxy for how “curved” the low-loss path must be in order to connect the two solutions.
@@ -437,7 +430,7 @@ the three points (the two minima and the optimized middle point) as a triangle i
 space, and compute the angles of the triangle, and the area of the triangle given that the distance
 between endpoints is fixed.
 
-				<h3>3.6.3 Sharpness</h3>
+				<h2>3.6.3 Sharpness</h2>
 While barrier height and curvature reflect global properties of the path, we also desire to characterize the local geometry of the landscape around the low-loss solutions. Specifically, we are
 interested in whether the path corresponds to flat, stable basins or sharp, narrow valleys. Flat
 regions are typically associated with improved generalization, robustness, and lower sensitivity
@@ -467,7 +460,7 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-						<h1>4. Results & Analysis</h1>
+						<h3>4. Results & Analysis</h3>
             We present a detailed analysis of the loss landscape and connectivity 
 			between minima for ResNet models of varying capacity on CIFAR-10 and CIFAR-100 datasets. 
 			We primarily focus on Bezier paths, as PolyChain paths exhibited similar trends. 
@@ -543,7 +536,14 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 			remains possible that barrier height decreases along curved paths, which will be examined 
 			next.
 
-			<img src="./images/convexCombinations.png" width=1024px/>
+			<!-- <img src="./images/convexCombinations.png" width=1024px/> -->
+
+			<figure style="text-align: center;">
+				<img src="./images/convexCombinations.png" width="1024px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 1: Test accuracy along the line-segment between modes.
+				</figcaption>
+			</figure>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						Linear paths provide a baseline for understanding loss landscape geometry, but may not reveal the true connectivity between minima.
@@ -561,9 +561,12 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 			ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider 
 			models are easier to connect smoothly: their loss basins are flatter and more 
 			consistent. However, gains seemed to level off beyond ResNet-65, suggesting 
-			that very large models may not benefit further in terms of barrier height.
+			that very large models may not benefit further in terms of barrier height.<br><br>
 			
             <table class="results">
+			<caption style="font-weight: normal; margin-bottom: 8px;">
+				Table 2: Area Under Curve (AUC) and Barrier Height for the CIFAR-100 test set.
+			</caption>
               <tr>
                 <th>Model</th>
                 <th>(Convex) AUC</th>
@@ -606,12 +609,12 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
                 <td>1.1634</td>
                 <td>2.08%</td>
               </tr>
-            </table><br>
+            </table>
 
             
 		    </div>
 		    <div class="margin-right-block">
-						Area Under Curve (AUC) and Peak Height metrics for CIFAR-100 test set.
+						Area Under Curve (AUC) and Peak Height metrics for the CIFAR-100 test set.
 		    </div>
 		</div>
 
@@ -621,21 +624,30 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 		    <div class="main-content-block">
 						<h2>4.3 Angle</h2>
 			The table below reports the interior angle ∠ACB for each model on the two datasets, as
-			well as the distance between the path midpoint C, and the endpoints A, B. 
+			well as the distance between the path midpoint C, and the endpoints A, B.<br><br>
             
-			<div style="display: flex; gap: 20px;">
+			<div style="display: flex; gap: 2px;">
 
   <!-- CIFAR-10 TABLE -->
-  <table class="results" style="border-collapse: collapse; width: 45%;">
+   <style>
+	table.results th,
+	table.results td {
+		text-align: center;
+	}
+	</style>
+  <table class="results" style="border-collapse: collapse; width:38%;">
+	<caption style="font-weight: normal; margin-bottom: 8px;">
+				Table 3: Path curvature metrics for CIFAR-10
+	</caption>
     <tr>
       <th>Model</th>
       <th>||A-C||₂</th>
       <th>||B-C||₂</th>
       <th>∠ACB (deg)</th>
     </tr>
-    <tr>
+    <!-- <tr>
       <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-10</b></td>
-    </tr>
+    </tr> -->
     <tr><td>ResNet-8</td><td>38.75</td><td>38.69</td><td>69.39</td></tr>
     <tr><td>ResNet-26</td><td>49.16</td><td>48.49</td><td>62.31</td></tr>
     <tr><td>ResNet-38</td><td>49.78</td><td>53.37</td><td>62.78</td></tr>
@@ -644,16 +656,19 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
   </table>
 
   <!-- CIFAR-100 TABLE -->
-  <table class="results" style="border-collapse: collapse; width: 45%;">
+  <table class="results" style="border-collapse: collapse; width: 38%;">
+	<caption style="font-weight: normal; margin-bottom: 8px;">
+				Table 4: Path curvature metrics for CIFAR-100
+	</caption>
     <tr>
       <th>Model</th>
       <th>||A-C||₂</th>
       <th>||B-C||₂</th>
       <th>∠ACB (deg)</th>
     </tr>
-    <tr>
+    <!-- <tr>
       <td colspan="4" style="background-color: #f8f8f8;"><b>CIFAR-100</b></td>
-    </tr>
+    </tr> -->
     <tr><td>ResNet-8</td><td>58.72</td><td>59.81</td><td>70.75</td></tr>
     <tr><td>ResNet-26</td><td>76.25</td><td>78.02</td><td>68.76</td></tr>
     <tr><td>ResNet-38</td><td>85.79</td><td>84.68</td><td>70.18</td></tr>
@@ -664,7 +679,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 </div>
 
 
-            Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
+            <br>Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
 			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
 			degree of nonlinearity. Smaller angles correspond to a larger outward displacement of 
 			C and therefore to a more strongly curved low-loss path.<br><br>
@@ -703,19 +718,30 @@ and the distance between minima
 			generalization capabilities of a trained model. Our analysis reveals that, 
 			for the same optimizer hyperparameters, smaller models like ResNet-8 tend to 
 			find solutions in sharper minima compared to larger models like ResNet-119 which 
-			opt instead for flatter, wider basins. This <strong>supports</strong> our hypothesis.<br><br>
+			opt instead for flatter, wider basins. This <strong>supports</strong> our hypothesis.
 			
-			<img src="./images/bezier_sharpness.png" width=1024px/>
-            However, despite the low barrier height for a large model like ResNet-119, our 
+			<!-- <img src="./images/bezier_sharpness.png" width=1024px/> -->
+			<figure style="text-align: center;">
+				<img src="./images/bezier_sharpness.png" width="1024px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 2: Sharpness along the connected Bezier paths for CIFAR10 and CIFAR100.
+				</figcaption>
+			</figure>
+            <br>However, despite the low barrier height for a large model like ResNet-119, our 
 			results show that the sharpness still changes by a factor of 2 between the 
 			endpoints and the midpoint of the low-loss path. To ensure that this behavior 
 			was a more global rather than local property, the average of the five largest 
 			eigenvalues of the Hessian was studied, which supported the behavior exhibited 
-			by the largest eigenvalue alone. The results can be seen below.<br><br>
+			by the largest eigenvalue alone. The results can be seen below.
 
-			<img src="./images/bezier_top5eig.png" width=1024px/>
-
-            The sharpness behavior highlights that a low loss alone might not be enough to 
+			<!-- <img src="./images/bezier_top5eig.png" width=1024px/> -->
+			<figure style="text-align: center;">
+				<img src="./images/bezier_top5eig.png" width="1024px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 3: Mean of the five largest Hessian eigenvalues along the connected Bezier paths for CIFAR10 and CIFAR100.
+				</figcaption>
+			</figure>
+            <br>The sharpness behavior highlights that a low loss alone might not be enough to 
 			classify a path as consisting of truly equivalent solutions. This can be relevant 
 			in scenarios such as when the low-loss path is being used to create an ensemble of 
 			neural networks. If truly similar performance is desired, it can be wise to also 
@@ -752,7 +778,13 @@ and the distance between minima
 			and widening of the low-error contours across models, indicating that 
 			overparameterization produces landscapes in which low-error regions are not 
 			only connected but also spatially expansive.
-			<img src="./images/test_loss_planes_cifar10.png" width=512px/>
+			<!-- <img src="./images/test_loss_planes_cifar10.png" width=512px/> -->
+			<figure style="text-align: center;">
+				<img src="./images/test_loss_planes_cifar10.png" width="512px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 4: Planar slices of the highly dimensional loss landscape of varying size ResNet models.
+				</figcaption>
+			</figure>
 		    </div>
 		    <div class="margin-right-block">
 						Two-dimensional slices provide insight into the local structure of the high-dimensional loss landscape.
@@ -777,10 +809,17 @@ and the distance between minima
 			However, the results from the CIFAR-10 dataset only <strong>mildly support</strong> our 
 			hypothesis while the results for CIFAR-100 actually <strong>go against</strong> it. 
 			We believe this inconsistency can be explained by the model capacities used 
-			in our study. <br><br>
+			in our study.
 			
-			<img src="./images/gen_gap_v1.png" width=1024px/>
+			<!-- <img src="./images/gen_gap_v1.png" width=1024px/> -->
+			<figure style="text-align: center;">
+				<img src="./images/gen_gap_v1.png" width="1024px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 5: Generalization gaps for CIFAR10 and CIFAR100.
+				</figcaption>
+			</figure>
 
+			<br>
             As can be seen in the plot above, for the CIFAR-10 dataset, the generalization gap follows 
 			the double descent 
 			phenomenon, and the results in the plot below support our hypothesis that low sharpness 
@@ -788,7 +827,7 @@ and the distance between minima
 			the entire length of the low-loss path. However, the evidence is only mildly 
 			supportive. We believe the interpolation threshold occurs around 0.5M parameters,
 			but most of our model capacities fall above this threshold.
-			<br>
+			<br><br>
 			Additionally, we do not have a fine range of data in the ”classical” regime showing the lead-up
 			to the interpolation threshold, and we believe a model larger than ResNet-119 would better
 			illustrate the behavior in the ”modern” interpolating regime. Therefore, to produce stronger
@@ -804,7 +843,7 @@ and the distance between minima
 			above which shows that while the training error decreases each time model capacity is increases, 
 			the generalization gap only increases.
 			We believe the interpolation threshold is near 1.2M parameters as that is the first time the training error 
-			approaches 0%.<br>
+			approaches 0%.<br><br>
 			Due to the large computational requirements to
 			train a ResNet-119 model, it was not within the scope of our timeline to train a larger model.
 			Given additional time, optimization hyperparameters could be adjusted in an attempt to reach
@@ -812,7 +851,14 @@ and the distance between minima
 			such as 2M and 5M could also provide valuable data. We believe these larger models would go
 			above the interpolation threshold and generate support for our hypothesis.
 
-			<img src="./images/gen_gap_v2.png" width=1024x/>
+			<!-- <img src="./images/gen_gap_v2.png" width=1024x/> -->
+			<figure style="text-align: center;">
+				<img src="./images/gen_gap_v2.png" width="1024px" />
+				<figcaption style="font-size: 16px; margin-top: 6px; font-weight: normal;">
+					Figure 6: Error and generalization gap for CIFAR10 and CIFAR100.
+				</figcaption>
+			</figure>
+
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						The double descent phenomenon describes how test error can decrease again after initially increasing with model complexity.
@@ -823,7 +869,7 @@ and the distance between minima
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-						<h1>5. Conclusion</h1>
+						<h3>5. Conclusion</h3>
             This project performed a systematic, quantitative geometric analysis of the loss landscape for
 			ResNet architectures of varying depth, helping bridge the gap between theoretical properties of
 			the optimization landscape and empirical model performance. Our findings support many core
