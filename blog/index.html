@@ -273,7 +273,7 @@ reliable and interpretable models.
 			by the three points.
 
 			<br><br> The path was parametrized using established interpolation 
-			schemes: <strong>Bezier curve</strong>, and <strong>piecewise linear</strong>. 
+			schemes: <strong>Bezier curve</strong>, and <strong>piecewise linear (PolyChain)</strong>. 
 			In addition, we computed 
 			the loss on a grid of points across this plane in order
 			to visualize local variations in loss away from the optimized path.<br><br>
@@ -418,7 +418,7 @@ beyond weight decay and the learning rate schedule
 		    <div class="main-content-block">
 						<h2>3.5 Compute Hardware</h2>
 All models were trained on a single L4 or A100 GPU using Google Colab Pro. Training, path
-search, and path analysis for each model required a total of 1-7 hours. Including experiments
+search, and path analysis required a total of 1-7 hours, for each model. Including experiments
 which did not pan out, the total number of compute units used for this project is between
 320-380.
 		    </div>
@@ -447,13 +447,13 @@ we define the barrier height as the difference between the maximum and minimum l
 along the path. Intuitively, this measures the “cost” of traveling between two minima: a high
 barrier implies that the path crosses a region of poor performance, while a nearly flat barrier
 indicates a smooth and well-connected landscape. We compute barrier height for two different
-interpolation regimes: the computed low-loss path (Bezier and Polychain), and the straight-line
+interpolation regimes: the computed low-loss path (Bezier and PolyChain), and the straight-line
 interpolation between the two endpoints. Barrier height can be evaluated on the training loss,
 test loss, or the generalization gap.
 
 
 				<h3>3.6.2 Angle</h3>
-Many curve-based interpolation methods, such as Bezier curves or polychains, introduce a middle
+Many curve-based interpolation methods, such as Bezier curves or PolyChains, introduce a middle
 point that is optimized to minimize loss along the path. The relative position of this middle point
 provides a proxy for how “curved” the low-loss path must be in order to connect the two solutions.
 Conceptually, if the middle point lies close to the straight segment connecting the endpoints, the
@@ -517,6 +517,7 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 						<h2>4.1 Convex Combination</h2>
             A convex combination of two minima corresponds to a linear interpolation between their 
 			parameter vectors. The path can be represented as 
+			<br><br>
 			<math display="block">
   <mrow>
     <!-- θ(t) -->
@@ -551,15 +552,15 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
     <mo>[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>]</mo>
   </mrow>
 </math>
-			Studying such linear paths is useful because it provides a simple baseline for understanding
-the geometry of the loss landscape: any drop in performance along this line indicates a barrier
-between the minima. It is important to note that the observed barrier height along a convex
-combination can be large simply because the path is linear, and not necessarily because the
-minima are inherently separated. Higher-order paths, presented in Section 4.2, may circumvent
-these high-loss regions and reveal more connected low-loss trajectories.<br><br>
+			<br>Studying such linear paths is useful because it provides a simple baseline for understanding
+			the geometry of the loss landscape: any drop in performance along this line indicates a barrier
+			between the minima. It is important to note that the observed barrier height along a convex
+			combination can be large simply because the path is linear, and not necessarily because the
+			minima are inherently separated. Higher-order paths, presented in Section 4.2, may circumvent
+			these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 
 
-			As can be seen in the plot below, across architectures, straight-line interpolation caused 
+			As can be seen in the plot below - across architectures - straight-line interpolation caused 
 			similarly large accuracy drops.
 			Effectively showing that increased model 
 			complexity does not reduce barrier height along linear paths. However, larger 
@@ -691,7 +692,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 </div>
 
 
-            Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
+            Since the two norms ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
 			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
 			degree of nonlinearity. Smaller angles correspond to a larger outward displacement of 
 			C and therefore to a more strongly curved low-loss path.<br><br>
