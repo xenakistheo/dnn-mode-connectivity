@@ -9,10 +9,7 @@ import torch.nn as nn
 import curves
 
 
-
-__all__ = ['ResNet8', 'ResNet20', 'ResNet26', 'ResNet32', 'ResNet38', 'ResNet44', 'ResNet56', 'ResNet62', 'ResNet101', 'ResNet119',
-           'ResNet164', 'ResNet272', 'ResNet326', 'ResNet650', 'ResNet65']
-
+__all__ = ['ResNet8', 'ResNet26', 'ResNet38', 'ResNet65', 'ResNet119']
 
 
 
@@ -392,54 +389,11 @@ class ResNetCurve(nn.Module):
         return x
 
 
-class ResNet20:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 20}
 
-class ResNet32:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 32}
-
-class ResNet44:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 44}
-
-class ResNet56:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 56}
-
-class ResNet101:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 101}
-
-class ResNet164:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 164}
-
-class ResNet272:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 272}
-
-class ResNet326:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 326}
-
-class ResNet650:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 650}
 
 #Use depth = 6n + 2   with n = number of blocks per stage
 
-#add 8, 26, 38, 62, 116
+#add 8, 26, 38, 65, 110
 class ResNet8:
     base = ResNetBase
     curve = ResNetCurve
@@ -454,11 +408,6 @@ class ResNet38:
     base = ResNetBase
     curve = ResNetCurve
     kwargs = {'depth': 38}
-
-class ResNet62:
-    base = ResNetBase
-    curve = ResNetCurve
-    kwargs = {'depth': 62}
 
 class ResNet65:
     base = ResNetBase
