@@ -158,21 +158,43 @@
 				</div>
 		    <div class="main-content-block">
 						<h1>1. Introduction</h1>
-            It is widely accepted that overparameterization plays a central role in the remarkable generalization capabilities of modern deep neural networks. Specifically, increasing model capacity leads to loss landscapes characterized by numerous flat valleys or basins, each corresponding to similarly low loss. A central feature of these landscapes is mode connectivity: the phenomenon in which a path of low loss exists between two distinct, well-trained solutions (modes) of the network <a href="#ref_1">[1, 2]</a>. Rather than being isolated points, these minima are linked, making it possible to traverse the loss landscape along a smooth path without encountering significant barriers in loss.<br><br>
-
-            Most existing research has focused on the general existence of such low-loss paths. However, less attention has been paid to the detailed geometric properties, such as sharpness or curvature, of these paths and how they evolve quantitatively with the degree of overparameterization. A quantitative analysis of this geometric evolution is crucial for identifying key factors that govern the loss landscape and generalization performance. This understanding can be instrumental to advancing both the theoretical understanding of deep learning and the practical design of more efficient and robust neural networks. The fundamental nature of this topic makes it broadly applicable across a wide range of deep learning architectures and tasks.
+            It is widely accepted that overparameterization plays a central role in the remarkable generalization capabilities of modern deep neural networks. Specifically, increasing model capacity leads to
+loss landscapes characterized by numerous flat valleys or basins, each corresponding to similarly
+low loss. A central feature of these landscapes is <strong>mode connectivity</strong>: the phenomenon in which
+a path of low loss exists between two distinct, well-trained solutions (modes) of the network.
+Rather than being isolated points, these minima are linked, making it possible to traverse the
+loss landscape along a smooth path without encountering significant barriers in loss.
+<br><br>
+Most existing research has focused on the general existence of such low-loss paths. However,
+less attention has been paid to the detailed geometric properties, such as sharpness or curvature,
+of these paths and how they evolve quantitatively with the degree of overparameterization. A
+quantitative analysis of this geometric evolution is crucial for identifying key factors that govern
+the loss landscape and generalization performance. This understanding can be instrumental to
+advancing both the theoretical understanding of deep learning and the practical design of more
+efficient and robust neural networks. The fundamental nature of this topic makes it broadly
+applicable across a wide range of deep learning architectures and tasks.
 		    </div>
 		    <div class="margin-right-block">
 						Mode connectivity refers to the existence of low-loss paths connecting different trained solutions in the parameter space of neural networks.
 		    </div>
 		</div>
 
+
+
 		<div class="content-margin-container">
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
 						<h2>1.1 Novelty and Significance</h2>
-            This project aims to help bridge the gap between properties of the optimization landscape and the practical performance of deep learning models. This will be done by performing a comprehensive geometric analysis of the loss landscape for multiple deep neural networks. The novelty of our work comes from the quantitative investigation of barrier height, path curvature, and sharpness as a function of a single, controlled factor: network depth, a proxy for overparameterization. The results aim to provide intuitive and meaningful insights into how overparameterization influences the landscape and performance of deep learning models. The significance of these results is that they offer a clearer link between loss landscape geometry and empirical performance, enabling more principled design and training strategies of deep learning models.
+  This project aims to help bridge the gap between properties of the optimization landscape and the
+practical performance of deep learning models. This will be done by performing a comprehensive
+geometric analysis of the loss landscape for multiple deep neural networks. The <strong>novelty</strong> of our
+work comes from the quantitative investigation of barrier height, path curvature, and sharpness
+as a function of a single, controlled factor: network depth, a proxy for overparameterization. The
+results aim to provide intuitive and meaningful insights into how overparameterization influences
+the landscape and performance of deep learning models. The <strong>significance</strong> of these results is that
+they offer a clearer link between loss landscape geometry and empirical performance, enabling
+more principled design and training strategies of deep learning models.
 		    </div>
 		    <div class="margin-right-block">
 						The study controls for network depth while measuring geometric properties of the loss landscape.
@@ -186,13 +208,13 @@
 						<h2>1.2 Hypotheses</h2>
             The hypotheses for our work include:<br><br>
 
-            <b>- Lower Barrier Heights Accompany Deeper Networks:</b> We hypothesize that increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.<br><br>
+            <b>- Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.<br><br>
 
-            <b>- Path Curvature Decreases with Overparameterization:</b> We hypothesize that the curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.<br><br>
+            <b>- Path Curvature Decreases with Overparameterization</b> <br>The curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.<br><br>
 
-            <b>- Increased Overparameterization Correlates with Flatter Minima:</b> We hypothesize that as the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.<br><br>
+            <b>- Increased Overparameterization Correlates with Flatter Minima</b> <br>As the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.<br><br>
 
-            <b>- Path Geometry Directly Predicts Generalization:</b> We hypothesize that a measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.
+            <b>- Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -205,13 +227,18 @@
 						<h1>2. Background</h1>
 					  Empirical and theoretical studies have demonstrated that wider networks tend to exhibit mode connectivity: where distinct minima are connected by a smooth, low-loss path <a href="#ref_1">[1, 2]</a>. These networks tend to occupy regions of the loss landscape that are smoother, with shorter and less pronounced barriers between minima. This characteristic suggests that wider models, by virtue of their increased parameterization, might allow for greater flexibility in optimization, potentially leading to more robust solutions.<br><br>
 
-            However, most prior work has focused on the existence of connectivity, rather than the geometry of these connections. In particular, even fewer studies have measured how landscape properties, such as barrier height and path sharpness, vary not just within one path, but across varying architectural factors like depth in practical deep learning settings on real datasets (e.g., ResNet or CNNs on CIFAR-10).<br><br>
+            However, most prior work has focused on the existence of connectivity, rather than the <em>geometry</em> of these connections. In particular, even fewer studies have measured how landscape properties, such as barrier height and path sharpness, vary not just within one path, but across varying architectural factors like depth in practical deep learning settings on real datasets (e.g., ResNet or CNNs on CIFAR-10).<br><br>
 
             Moreover, while increased connectivity through overparameterization has been linked to improved generalization, this relationship is not without limits <a href="#ref_3">[3, 4]</a>. Beyond a certain degree of overparameterization, increased capacity may no longer improve generalization. Larger models might exhibit wider but shallower basins in the loss landscape, potentially impairing test performance on out-of-distribution data. Furthermore, increasing depth and width might give opposing results <a href="#ref_5">[5]</a>. The precise conditions under which the benefits of increased connectivity plateau, and how the loss landscape geometry contributes to this effect, remains underexplored.<br><br>
 
             The collective body of existing research confirms the central role of overparameterization in shaping the loss landscape <a href="#ref_6">[6, 7]</a>. It has been established that the set of optimal solutions in networks where the number of parameters significantly exceeds the number of data points is not discrete but rather forms a high-dimensional submanifold <a href="#ref_8">[8, 9]</a>. Awareness of this phenomenon fundamentally changes the optimization challenge. Finding a good solution requires finding not only low-loss minimum, but also a minimum that generalizes well, a property not reflected in the loss itself. This has motivated work to study the effect of hyperparameters such as learning rate and batch size on the width of the minima that stochastic gradient descent (SGD) converges to <a href="#ref_10">[10]</a>. Furthermore, dedicated flatness-aware optimization strategies, such as sharpness-aware minimization (SAM) <a href="#ref_11">[11]</a> and stochastic weight averaging (SWA) <a href="#ref_12">[12]</a>, have been developed to actively seek out flat minima <a href="#ref_13">[13]</a>.<br><br>
 
-            Furthermore, a substantial area of research has focused on the relationship between optimization and flat minima, hypothesizing that the flatness of a basin correlates directly with a model's superior generalization ability <a href="#ref_14">[14]</a>. However, the connection between these macroscopic landscape properties, like the existence of flat minima, and the microscopic geometry of the connections between them, like path curvature and sharpness, remains loosely quantified, particularly in the context of controlled architectural variations like depth on modern architectures <a href="#ref_6">[6, 7]</a>.
+            Furthermore, a substantial area of research has focused on the relationship between optimization and flat minima, hypothesizing that the flatness of a basin correlates directly with a model's superior generalization ability <a href="#ref_14">[14]</a>. However, the connection between these macroscopic landscape properties, like the existence of flat minima, and the microscopic geometry of the connections between them, like path curvature and sharpness, remains loosely quantified, particularly in the context of controlled architectural variations like depth on modern architectures <a href="#ref_6">[6, 7]</a>.<br>
+			Thus, a significant gap remains in rigorously and empirically linking the degree of
+overparameterization to the quantitative geometry of the optimization landscape. This motivates a systematic investigation of how overparameterization shapes the geometry of the loss
+landscape, and how this, in turn, influences key properties like generalization. By studying these aspects in a controlled and thorough manner, we aim to uncover insights that could inform the
+design of more efficient architectures and optimization strategies, ultimately leading to more
+reliable and interpretable models.
 		    </div>
 		    <div class="margin-right-block">
 						Flatness-aware optimization strategies like sharpness-aware minimization (SAM) and stochastic weight averaging (SWA) have been developed to actively seek out flat minima.
@@ -223,15 +250,19 @@
 				</div>
 		    <div class="main-content-block">
 						<h1>3. Methods & Experiments</h1>
+			Before introducing the specific metrics, we briefly summarize the overall methodology used to
+generate the objects we evaluated.<br><br>
             For each network architecture, we trained two independent models from different random initializations. Each training run produced a set of parameters, denoted A and B, which corresponded to distinct minima of the loss landscape. Using these two solutions as endpoints, we then constructed a low-loss connecting curve in parameter space by introducing and optimizing a third point, C, which defined a nonlinear interpolation between A and B.<br><br>
 
-            This resulted in a parameterized path passing through (A, C, B), along which we sampled and evaluated loss, curvature, and sharpness. For comparison, we also evaluated the straight-line interpolation between A and B, as well as geometric properties of the plane spanned by the three points.<br><br>
-
+            This resulted in a parameterized path passing through (A, C, B), along which we sampled and evaluated loss, curvature, and sharpness. For comparison, we also evaluated the straight-line interpolation between A and B, as well as geometric properties of the plane spanned by the three points.
+			<br><br> The path was parametrized using established interpolation schemes: Bezier curve, and piecewise linear. In addition, we computed the loss on a grid of points across this plane in order
+to visualize local variations in loss away from the optimized path.<br><br>
             Along each path we evaluated: training and test loss, curvature metrics, maximum barrier height, and generalization gap. This procedure allowed us to compare different architectures not only in terms of whether a low-loss path existed, but also the geometry of it.
 		    </div>
 		    <div class="margin-right-block">
-						The methodology uses Bezier curves and piecewise linear paths to connect independently trained models.
+						The methodology used Bezier curves and piecewise linear paths to connect independently trained models.<br><br><br><br><br>Along each path, loss, curvature, maximum barrier height, and generalization gap was measured. 
 		    </div>
+			
 		</div>
 
 		<div class="content-margin-container">
