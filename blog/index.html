@@ -462,11 +462,62 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 				</div>
 		    <div class="main-content-block">
 						<h2>4.1 Convex Combination</h2>
-            A convex combination of two minima corresponds to a linear interpolation between their parameter vectors. Across all architectures, straight-line interpolation produced similarly large drops in accuracy, indicating that the barrier height along the straight-line path was not reduced by increased model complexity.<br><br>
+            A convex combination of two minima corresponds to a linear interpolation between their 
+			parameter vectors. The path can be represented as 
+			<math display="block">
+  <mrow>
+    <!-- θ(t) -->
+    <mi>&#x03B8;</mi>
+    <mo>(</mo><mi>t</mi><mo>)</mo>
+    <mo>=</mo>
 
-            However, the width of the low-accuracy region decreased with larger models, suggesting that deeper networks occupied broader basins of good performance, while smaller models traversed extended high-loss regions. Thus, overparameterization did not change the depth of the barrier on the linear path connecting minima, but it did change the area underneath the barrier.<br><br>
+    <!-- (1 - t)θ1 -->
+    <mo>(</mo>
+      <mn>1</mn>
+      <mo>&minus;</mo>
+      <mi>t</mi>
+    <mo>)</mo>
+    <msub>
+      <mi>&#x03B8;</mi>
+      <mn>1</mn>
+    </msub>
 
-            This does not support the hypothesis that barrier height decreases with deeper networks. However, this only applies to linear paths and does not rule out the possibility of the barrier along a curved path decreasing with increased depth.
+    <mo>+</mo>
+
+    <!-- tθ2 -->
+    <mi>t</mi>
+    <msub>
+      <mi>&#x03B8;</mi>
+      <mn>2</mn>
+    </msub>
+
+    <!-- , t ∈ [0,1] -->
+    <mo>,</mo>
+    <mi>t</mi>
+    <mo>&#x2208;</mo> <!-- element-of -->
+    <mo>[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>]</mo>
+  </mrow>
+</math>
+			Studying such linear paths is useful because it provides a simple baseline for understanding
+the geometry of the loss landscape: any drop in performance along this line indicates a barrier
+between the minima. It is important to note that the observed barrier height along a convex
+combination can be large simply because the path is linear, and not necessarily because the
+minima are inherently separated. Higher-order paths, presented in Section 4.2, may circumvent
+these high-loss regions and reveal more connected low-loss trajectories.<br><br>
+
+
+			As can be seen in the plot below, across architectures, straight-line interpolation caused 
+			similarly large accuracy drops.
+			Effectively showing that increased model 
+			complexity does not reduce barrier height along linear paths. However, larger 
+			models showed a narrower low-accuracy region, indicating they occupy wider basins 
+			of good performance, while smaller models traverse longer high-loss regions. Thus, 
+			overparameterization affects the width but not the depth of the barrier on linear paths.
+			This <strong>does not support</strong> the idea that deeper networks reduce barrier height, though it 
+			remains possible that barrier height decreases along curved paths, which will be examined 
+			next.
+
+			<img src="./images/convexCombinations.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						Linear paths provide a baseline for understanding loss landscape geometry, but may not reveal the true connectivity between minima.
@@ -523,7 +574,13 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
               </tr>
             </table><br>
 
-            The table shows that smaller networks experienced large dips in accuracy when moving along the low-loss path, whereas larger networks were much more stable. For example, ResNet-8 lost more than 7% test accuracy at its worst point, while ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider models are easier to connect smoothly: their loss basins are flatter and more consistent. However, gains seemed to level off beyond ResNet-65, suggesting that very large models may not benefit further in terms of barrier height.
+            The table shows that smaller networks experienced large dips in accuracy when 
+			moving along the low-loss path, whereas larger networks were much more stable. 
+			For example, ResNet-8 lost more than 7% test accuracy at its worst point, while 
+			ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider 
+			models are easier to connect smoothly: their loss basins are flatter and more 
+			consistent. However, gains seemed to level off beyond ResNet-65, suggesting 
+			that very large models may not benefit further in terms of barrier height.
 		    </div>
 		    <div class="margin-right-block">
 						Area Under Curve (AUC) and Peak Height metrics for CIFAR-100 test set.
@@ -610,12 +667,21 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
               </tr>
             </table><br>
 
-            Since ||A-C|| and ||B-C|| are close to each other, the low-loss path is roughly symmetric, and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's degree of nonlinearity. Smaller angles correspond to a larger outward displacement of C and therefore to a more strongly curved low-loss path.<br><br>
+            Since ||A-C|| and ||B-C|| are close to each other, the low-loss path is roughly symmetric, 
+			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
+			degree of nonlinearity. Smaller angles correspond to a larger outward displacement of 
+			C and therefore to a more strongly curved low-loss path.<br><br>
 
-            On CIFAR-10, the angle decreased consistently with model size, from approximately 69° for ResNet-8 to approximately 55° for ResNet-119, indicating that larger models relied on more strongly curved paths to maintain low loss. This goes against our original expectations that the curvature of the low-loss paths would have an inverse correlation with model capacity. A similar, although less smooth, trend was observed on CIFAR-100.
+            On CIFAR-10, the angle decreased consistently with model size, from approximately 
+			69° for ResNet-8 to approximately 55° for ResNet-119, indicating that larger models 
+			relied on more strongly curved paths to maintain low loss. This goes against our 
+			original expectations that the curvature of the low-loss paths would have an inverse 
+			correlation with model capacity. A similar, although less smooth, trend was observed 
+			on CIFAR-100.
 		    </div>
 		    <div class="margin-right-block">
-						Counter-intuitively, larger networks require more curved paths to connect minima, despite having flatter loss landscapes overall.
+						Counter-intuitively, larger networks require more curved paths to connect 
+						minima, despite having flatter loss landscapes overall.
 		    </div>
 		</div>
 
@@ -624,11 +690,25 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 				</div>
 		    <div class="main-content-block">
 						<h2>4.4 Sharpness</h2>
-            The sharpness of the low-loss path provides insight into the robustness and generalization capabilities of a trained model. Our analysis reveals that, for the same optimizer hyperparameters, smaller models like ResNet-8 tend to find solutions in sharper minima compared to larger models like ResNet-119 which opt instead for flatter, wider basins. This supports our hypothesis.<br><br>
+            The sharpness of the low-loss path provides insight into the robustness and 
+			generalization capabilities of a trained model. Our analysis reveals that, 
+			for the same optimizer hyperparameters, smaller models like ResNet-8 tend to 
+			find solutions in sharper minima compared to larger models like ResNet-119 which 
+			opt instead for flatter, wider basins. This supports our hypothesis.<br><br>
 
-            However, despite the low barrier height for a large model like ResNet-119, our results show that the sharpness still changes by a factor of 2 between the endpoints and the midpoint of the low-loss path. To ensure that this behavior was a more global rather than local property, the average of the five largest eigenvalues of the Hessian was studied, which supported the behavior exhibited by the largest eigenvalue alone.<br><br>
+            However, despite the low barrier height for a large model like ResNet-119, our 
+			results show that the sharpness still changes by a factor of 2 between the 
+			endpoints and the midpoint of the low-loss path. To ensure that this behavior 
+			was a more global rather than local property, the average of the five largest 
+			eigenvalues of the Hessian was studied, which supported the behavior exhibited 
+			by the largest eigenvalue alone.<br><br>
 
-            The sharpness behavior highlights that a low loss alone might not be enough to classify a path as consisting of truly equivalent solutions. This can be relevant in scenarios such as when the low-loss path is being used to create an ensemble of neural networks. If truly similar performance is desired, it can be wise to also consider the sharpness when creating such an ensemble, otherwise, the varying sharpness can lead to unequal generalization capabilities amongst the ensemble.
+            The sharpness behavior highlights that a low loss alone might not be enough to 
+			classify a path as consisting of truly equivalent solutions. This can be relevant 
+			in scenarios such as when the low-loss path is being used to create an ensemble of 
+			neural networks. If truly similar performance is desired, it can be wise to also 
+			consider the sharpness when creating such an ensemble, otherwise, the varying 
+			sharpness can lead to unequal generalization capabilities amongst the ensemble.
 		    </div>
 		    <div class="margin-right-block">
 						Sharpness measurements used the top eigenvalues of the Hessian matrix as computed via power iteration.
@@ -640,11 +720,25 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 				</div>
 		    <div class="main-content-block">
 						<h2>4.5 Loss Landscape </h2>
-            Visualizations of the test error over a two-dimensional grid in the plane spanned by the two trained solutions and the optimized midpoint revealed how error varies not only along the low-loss path but also in its surrounding region. In all cases, the straight-line interpolation passed through a pronounced high-error ridge, while the optimized curve circumvented this region by bending into areas of lower error.<br><br>
+            Visualizations of the test error over a two-dimensional grid in the plane spanned 
+			by the two trained solutions and the optimized midpoint revealed how error varies 
+			not only along the low-loss path but also in its surrounding region. In all cases, 
+			the straight-line interpolation passed through a pronounced high-error ridge, 
+			while the optimized curve circumvented this region by bending into areas of 
+			lower error.<br><br>
 
-            Notably, the extent and shape of the low-error basins differed systematically across architectures: ResNet-8 exhibited a relatively narrow and fragmented low-error region, with steep transitions into high-error zones, whereas deeper models such as ResNet-65 and ResNet-119 displayed substantially broader low-error basins, within which the optimized path remained confined.<br><br>
+            Notably, the extent and shape of the low-error basins differed systematically 
+			across architectures: ResNet-8 exhibited a relatively narrow and fragmented 
+			low-error region, with steep transitions into high-error zones, whereas deeper 
+			models such as ResNet-65 and ResNet-119 displayed substantially broader low-error 
+			basins, within which the optimized path remained confined.<br><br>
 
-            This suggests that larger networks form wider and more coherent regions of good generalization performance, despite requiring a curved path to connect minima. The transition from narrow to broad basins is visible in the progressive flattening and widening of the low-error contours across models, indicating that overparameterization produces landscapes in which low-error regions are not only connected but also spatially expansive.
+            This suggests that larger networks form wider and more coherent regions of good 
+			generalization performance, despite requiring a curved path to connect minima. 
+			The transition from narrow to broad basins is visible in the progressive flattening 
+			and widening of the low-error contours across models, indicating that 
+			overparameterization produces landscapes in which low-error regions are not 
+			only connected but also spatially expansive.
 		    </div>
 		    <div class="margin-right-block">
 						Two-dimensional slices provide insight into the local structure of the high-dimensional loss landscape.
@@ -657,11 +751,25 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 				</div>
 		    <div class="main-content-block">
 						<h2>4.6 Generalization Gap</h2>
-            The difference between the train and test accuracies, referred to as the generalization gap, can provide valuable insight into the quality of the solution which goes beyond simply looking at its loss. We hypothesized that increased flatness (induced by increased model capacity) would align with improved generalization capabilities.<br><br>
+            The difference between the train and test accuracies, referred to as the 
+			generalization gap, can provide valuable insight into the quality of the 
+			solution which goes beyond simply looking at its loss. We hypothesized that 
+			increased flatness (induced by increased model capacity) would align with 
+			improved generalization capabilities.<br><br>
 
-            For the CIFAR-10 dataset, the generalization gap follows the double descent phenomenon, and the results support our hypothesis that low sharpness (induced by overparameterization) leads to improved generalization along the entire length of the low-loss path. However, the evidence is only mildly supportive. We believe the interpolation threshold occurs around 0.5M parameters, but most of our model capacities fall above this threshold.<br><br>
+            For the CIFAR-10 dataset, the generalization gap follows the double descent 
+			phenomenon, and the results support our hypothesis that low sharpness 
+			(induced by overparameterization) leads to improved generalization along 
+			the entire length of the low-loss path. However, the evidence is only mildly 
+			supportive. We believe the interpolation threshold occurs around 0.5M parameters,
+			but most of our model capacities fall above this threshold.<br><br>
 
-            For CIFAR-100, the results do not support our hypothesis that links overparameterization, sharpness, and generalization. We believe this is because we have not yet reached the interpolation threshold. While the training error decreases each time model capacity is increased, the generalization gap only increases. We believe the interpolation threshold is near 1.2M parameters as that is the first time the training error approaches 0%.
+            For CIFAR-100, the results do not support our hypothesis that links overparameterization, 
+			sharpness, and generalization. We believe this is because we have not yet reached 
+			the interpolation threshold. While the training error decreases each time model 
+			capacity is increased, the generalization gap only increases. We believe the interpolation 
+			threshold is near 1.2M parameters as that is the first time the training error 
+			approaches 0%.
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						The double descent phenomenon describes how test error can decrease again after initially increasing with model complexity.
