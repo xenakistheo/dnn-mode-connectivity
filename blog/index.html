@@ -206,15 +206,15 @@ more principled design and training strategies of deep learning models.
 				</div>
 		    <div class="main-content-block">
 						<h2>1.2 Hypotheses</h2>
-            The hypotheses for our work include:<br><br>
+            The hypotheses for our work include:
+			<ul>
+				<li> <b> Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.</li>
+				<li><b>Path Curvature Decreases with Overparameterization</b> <br>The curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.</li>
+				<li><b>Increased Overparameterization Correlates with Flatter Minima</b> <br>As the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.</li>
+				<li><b>Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.</li>
+			</ul>
 
-            <b>- Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.<br><br>
-
-            <b>- Path Curvature Decreases with Overparameterization</b> <br>The curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.<br><br>
-
-            <b>- Increased Overparameterization Correlates with Flatter Minima</b> <br>As the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.<br><br>
-
-            <b>- Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.
+            
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -272,7 +272,19 @@ to visualize local variations in loss away from the optimized path.<br><br>
 						<h2>3.1 Network Architecture</h2>
             To investigate how mode connectivity and loss-landscape geometry varies as a function of architectural complexity, we compared several variants of the same neural network family. Specifically, we evaluated five residual networks of increasing depth: ResNet-8, ResNet-26, ResNet-38, ResNet-65, and ResNet-119.<br><br>
 
-            Residual networks (ResNets) introduce skip connections that allow information to bypass nonlinear layers, enabling efficient optimization of deep architectures and mitigating vanishing gradients <a href="#ref_15">[15]</a>. Beyond their practical advantages, ResNets serve as a useful test case for loss-landscape analysis. Their residual block structure with skip connections and ease of scalability leads to loss landscapes with nontrivial geometry <a href="#ref_9">[9, 16]</a>, while still being compact enough to train extensively under controlled conditions <a href="#ref_1">[1]</a>. By spanning more than an order of magnitude in model size, this architectural sweep allowed us to examine how path geometry, barrier height, and generalization evolve as networks transition from moderately to heavily overparameterized regimes.<br><br>
+            Residual networks (ResNets) introduce skip connections that allow information to bypass nonlinear layers, enabling efficient optimization of deep architectures and mitigating vanishing gradients <a href="#ref_15">[15]</a>. Beyond their practical advantages, ResNets serve as a useful test case for loss-landscape analysis. Their residual block structure with skip connections and ease of scalability leads to loss landscapes with nontrivial geometry <a href="#ref_9">[9, 16]</a>, while still being compact enough to train extensively under controlled conditions <a href="#ref_1">[1]</a>. 
+			 We restrict our study to a
+single architectural family rather than comparing radically different model types for two reasons:<br><br>
+			<ul>
+				<li>Varying depth within the same architecture allows us to isolate the effect of overparameterization without confounding differences in inductive biases or other factors.</li>
+				<li>Exploring mode connectivity requires repeated training, interpolation, and evaluation across
+networks, which scales unfavorably with architecture complexity. Restricting to a single
+family keeps the computational cost feasible.</li>
+			</ul>
+			We chose ResNets in particular because they were covered in our course and are known to
+outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a>.
+			By spanning more than an order of magnitude in model size, this architectural sweep allowed us to examine how path geometry, barrier height, and generalization evolve as networks transition from moderately to heavily overparameterized regimes.<br><br>
+			The number of parameters in the chosen models can be seen in the table below. 
 
             <table class="results">
               <tr>
@@ -325,12 +337,10 @@ to visualize local variations in loss away from the optimized path.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>3.3 Low-Loss Path Search</h2>
-            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 training and 10,000 test images, covering everyday object categories.<br><br>
-
-            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
+            #### THIS HAS TO BE FILLED OUT ####
 		    </div>
 		    <div class="margin-right-block">
-						These datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
+						TEXT?
 		    </div>
 		</div>
 
@@ -339,9 +349,17 @@ to visualize local variations in loss away from the optimized path.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>3.4 Training Configuration</h2>
-            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 training and 10,000 test images, covering everyday object categories.<br><br>
+            All networks were trained from scratch using identical optimization settings to maintain a consistent baseline across architectures. Minimal effort was devoted to hyperparameter tuning to
+avoid introducing biases toward any particular model.<br><br>
+Each model was trained for 80 epochs using stochastic gradient descent with momentum (0.9),
+an initial learning rate of 0.1, and weight decay of 3×10<sup>-4</sup> <br><br>
+A piecewise learning rate schedule
+was applied in which the learning rate remained constant during the first half of training and
+decayed linearly during the subsequent 40% of epochs. Standard data augmentation was used in
+the form of random cropping and horizontal flipping, and the batch size was kept constant across
+architectures. No architecture-specific regularization or optimization heuristics were employed
+beyond weight decay and the learning rate schedule
 
-            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
 		    </div>
 		    <div class="margin-right-block">
 						These datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
@@ -353,9 +371,10 @@ to visualize local variations in loss away from the optimized path.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>3.5 Compute Hardware</h2>
-            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 training and 10,000 test images, covering everyday object categories.<br><br>
-
-            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
+All models were trained on a single L4 or A100 GPU using Google Colab Pro. Training, path
+search, and path analysis for each model required a total of 1-7 hours. Including experiments
+which did not pan out, the total number of compute units used for this project is between
+320-380.
 		    </div>
 		    <div class="margin-right-block">
 						These datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
@@ -367,10 +386,49 @@ to visualize local variations in loss away from the optimized path.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>3.6 Metrics</h2>
-            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 training and 10,000 test images, covering everyday object categories.<br><br>
+			To evaluate how network architecture influences the geometry of low-loss paths, we quantify
+several landscape properties that reflect smoothness, curvature, and robustness. While many
+potential metrics exist, we focus on three measures that capture complementary geometric characteristics: barrier height, angle-based curvature, and sharpness. Together, these metrics provide
+insight into how easily solutions can be connected, how much deviation from linearity is required,
+and how locally stable the solutions are along the path.
 
-            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
-		    </div>
+
+						<h3>3.6.1 Barrier Height</h3>
+			Given a parameterized path between two independently trained models, sampled at N points,
+we define the barrier height as the difference between the maximum and minimum loss observed
+along the path. Intuitively, this measures the “cost” of traveling between two minima: a high
+barrier implies that the path crosses a region of poor performance, while a nearly flat barrier
+indicates a smooth and well-connected landscape. We compute barrier height for two different
+interpolation regimes: the computed low-loss path (Bezier and Polychain), and the straight-line
+interpolation between the two endpoints. Barrier height can be evaluated on the training loss,
+test loss, or the generalization gap.
+
+
+				<h3>3.6.2 Angle</h3>
+Many curve-based interpolation methods, such as Bezier curves or polychains, introduce a middle
+point that is optimized to minimize loss along the path. The relative position of this middle point
+provides a proxy for how “curved” the low-loss path must be in order to connect the two solutions.
+Conceptually, if the middle point lies close to the straight segment connecting the endpoints, the
+landscape is close to linearly connected. Conversely, if the middle point lies far from the segment,
+the optimization process had to search farther from a linear trajectory to avoid high-loss regions,
+suggesting a higher degree of curvature or ruggedness in the landscape. To quantify this, we treat
+the three points (the two minima and the optimized middle point) as a triangle in parameter
+space, and compute the angles of the triangle, and the area of the triangle given that the distance
+between endpoints is fixed.
+
+				<h3>3.6.3 Sharpness</h3>
+While barrier height and curvature reflect global properties of the path, we also desire to characterize the local geometry of the landscape around the low-loss solutions. Specifically, we are
+interested in whether the path corresponds to flat, stable basins or sharp, narrow valleys. Flat
+regions are typically associated with improved generalization, robustness, and lower sensitivity
+to perturbations. A natural way to quantify local geometry is through the Hessian matrix, which
+captures second-order curvature of the loss. However, computing the full Hessian is intractable
+for modern neural networks due to its size. Instead, we approximate curvature by estimating the
+top-k eigenvalues of the Hessian at sampled points along the path. These dominant eigenvalues
+represent the directions of largest curvature, and therefore serve as a proxy for the “sharpness”
+of the loss landscape <a href="#ref_17">[17]</a>. Large top eigenvalues indicate steep, narrow regions (high sharpness),
+while smaller values indicate broader, flatter basins. Practical estimation of top eigenvalues can
+be achieved via iterative methods such as power iteration <a href="#ref_18">[18]</a>.
+             </div>
 		    <div class="margin-right-block">
 						These datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
 		    </div>
@@ -380,30 +438,20 @@ to visualize local variations in loss away from the optimized path.<br><br>
 		
 		</div>
 
-		<div class="content-margin-container">
-				<div class="margin-left-block">
-				</div>
-		    <div class="main-content-block">
-						<h2>Key Metrics</h2>
-            To evaluate how network architecture influences the geometry of low-loss paths, we quantify several landscape properties:<br><br>
-
-            <b>Barrier Height:</b> Given a parameterized path between two independently trained models, sampled at N points, we define the barrier height as the difference between the maximum and minimum loss observed along the path. This measures the "cost" of traveling between two minima.<br><br>
-
-            <b>Angle:</b> The relative position of the optimized middle point provides a proxy for how curved the low-loss path must be. We treat the three points (the two minima and the optimized middle point) as a triangle in parameter space and compute the angles of the triangle.<br><br>
-
-            <b>Sharpness:</b> We approximate curvature by estimating the top-k eigenvalues of the Hessian at sampled points along the path. These dominant eigenvalues represent the directions of largest curvature and serve as a proxy for the sharpness of the loss landscape. Large top eigenvalues indicate steep, narrow regions (high sharpness), while smaller values indicate broader, flatter basins.
-		    </div>
-		    <div class="margin-right-block">
-						Computing the full Hessian is intractable for modern neural networks, so we use iterative methods like power iteration.
-		    </div>
-		</div>
+	
 
 		<div class="content-margin-container" id="results">
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
 						<h1>4. Results & Analysis</h1>
-            We present a detailed analysis of the loss landscape and connectivity between minima for ResNet models of varying capacity on CIFAR-10 and CIFAR-100 datasets. We primarily focus on Bezier paths, as PolyChain paths exhibited similar trends. The greatest observed differences in results occurs between ResNet-8 and ResNet-26, which correlates with the biggest relative jump in capacity, a ~4.5× increase in parameters.
+            We present a detailed analysis of the loss landscape and connectivity 
+			between minima for ResNet models of varying capacity on CIFAR-10 and CIFAR-100 datasets. 
+			We primarily focus on Bezier paths, as PolyChain paths exhibited similar trends. 
+			Across all experiments, we examine how these metrics vary with model capacity.
+			The greatest observed differences in results occurs between ResNet-8 and ResNet-26, 
+			which correlates with the biggest relative jump in capacity, a ~4.5× increase in parameters.
+
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
