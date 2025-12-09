@@ -529,13 +529,21 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>4.2 Barrier Height</h2>
+			The table below shows that smaller networks experienced large dips in accuracy when 
+			moving along the low-loss path, whereas larger networks were much more stable. 
+			For example, ResNet-8 lost more than 7% test accuracy at its worst point, while 
+			ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider 
+			models are easier to connect smoothly: their loss basins are flatter and more 
+			consistent. However, gains seemed to level off beyond ResNet-65, suggesting 
+			that very large models may not benefit further in terms of barrier height.
+			
             <table class="results">
               <tr>
                 <th>Model</th>
-                <th>Convex AUC</th>
-                <th>Convex Peak</th>
-                <th>Bezier AUC</th>
-                <th>Bezier Peak</th>
+                <th>(Convex) AUC</th>
+                <th>(Convex) Peak</th>
+                <th>(Bezier) AUC</th>
+                <th>(Bezier) Peak</th>
               </tr>
               <tr>
                 <td>ResNet-8</td>
@@ -574,13 +582,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
               </tr>
             </table><br>
 
-            The table shows that smaller networks experienced large dips in accuracy when 
-			moving along the low-loss path, whereas larger networks were much more stable. 
-			For example, ResNet-8 lost more than 7% test accuracy at its worst point, while 
-			ResNet-65 and ResNet-119 dropped only ~2%. This indicates that deeper/wider 
-			models are easier to connect smoothly: their loss basins are flatter and more 
-			consistent. However, gains seemed to level off beyond ResNet-65, suggesting 
-			that very large models may not benefit further in terms of barrier height.
+            
 		    </div>
 		    <div class="margin-right-block">
 						Area Under Curve (AUC) and Peak Height metrics for CIFAR-100 test set.
@@ -592,6 +594,8 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>4.3 Angle</h2>
+			The table below reports the interior angle ∠ACB for each model on the two datasets, as
+			well as the distance between the path midpoint C, and the endpoints A, B. 
             <table class="results">
               <tr>
                 <th>Model</th>
@@ -667,17 +671,29 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
               </tr>
             </table><br>
 
-            Since ||A-C|| and ||B-C|| are close to each other, the low-loss path is roughly symmetric, 
+            Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
 			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
 			degree of nonlinearity. Smaller angles correspond to a larger outward displacement of 
 			C and therefore to a more strongly curved low-loss path.<br><br>
 
             On CIFAR-10, the angle decreased consistently with model size, from approximately 
 			69° for ResNet-8 to approximately 55° for ResNet-119, indicating that larger models 
-			relied on more strongly curved paths to maintain low loss. This goes against our 
+			relied on more strongly curved paths to maintain low loss. This <strong>goes against</strong> 
+			our 
 			original expectations that the curvature of the low-loss paths would have an inverse 
-			correlation with model capacity. A similar, although less smooth, trend was observed 
+			correlation with model capacity. A similar, although less pronounced, trend was observed 
 			on CIFAR-100.
+
+			<br><br>
+			As a supplemental note, while ||A − C|| and |B − C|| are useful to validate the assumption
+that the low-loss path is symmetric, two reasons make it difficult to arrive at a conclusive 
+statement for the trend of either metric alone across model capacity. Firstly, while there is an increase
+in the norm from ResNet-8 to ResNet-26 on the CIFAR10 dataset, the differences amongst other
+neighboring models with CIFAR10 are small, while the CIFAR100 dataset shows no clear trend.
+Secondly, Euclidean distance in high-dimensional space can be misleading as the differences in
+noisy dimensions can accumulate to dominate the distance between the relevant dimensions.
+Practically, this makes it difficult to confidently identify a relationship between model capacity
+and the distance between minima
 		    </div>
 		    <div class="margin-right-block">
 						Counter-intuitively, larger networks require more curved paths to connect 
@@ -694,14 +710,17 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 			generalization capabilities of a trained model. Our analysis reveals that, 
 			for the same optimizer hyperparameters, smaller models like ResNet-8 tend to 
 			find solutions in sharper minima compared to larger models like ResNet-119 which 
-			opt instead for flatter, wider basins. This supports our hypothesis.<br><br>
-
+			opt instead for flatter, wider basins. This <strong>supports</strong>our hypothesis.<br><br>
+			
+			<img src="./images/bezier_sharpness.png" width=512px/>
             However, despite the low barrier height for a large model like ResNet-119, our 
 			results show that the sharpness still changes by a factor of 2 between the 
 			endpoints and the midpoint of the low-loss path. To ensure that this behavior 
 			was a more global rather than local property, the average of the five largest 
 			eigenvalues of the Hessian was studied, which supported the behavior exhibited 
-			by the largest eigenvalue alone.<br><br>
+			by the largest eigenvalue alone. The results can be seen below.<br><br>
+
+			<img src="./images/bezier_top5eig.png" width=512px/>
 
             The sharpness behavior highlights that a low loss alone might not be enough to 
 			classify a path as consisting of truly equivalent solutions. This can be relevant 
@@ -720,6 +739,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>4.5 Loss Landscape </h2>
+			
             Visualizations of the test error over a two-dimensional grid in the plane spanned 
 			by the two trained solutions and the optimized midpoint revealed how error varies 
 			not only along the low-loss path but also in its surrounding region. In all cases, 
@@ -739,12 +759,13 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 			and widening of the low-error contours across models, indicating that 
 			overparameterization produces landscapes in which low-error regions are not 
 			only connected but also spatially expansive.
+			<img src="./images/test_loss_planes_cifar10.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block">
 						Two-dimensional slices provide insight into the local structure of the high-dimensional loss landscape.
 		    </div>
 		</div>
-		<img src="./images/test_loss_planes_cifar10.png" width=512px/>
+		
 
 		<div class="content-margin-container">
 				<div class="margin-left-block">
