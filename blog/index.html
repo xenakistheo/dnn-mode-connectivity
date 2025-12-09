@@ -774,23 +774,52 @@ and the distance between minima
 						<h2>4.6 Generalization Gap</h2>
             The difference between the train and test accuracies, referred to as the 
 			generalization gap, can provide valuable insight into the quality of the 
-			solution which goes beyond simply looking at its loss. We hypothesized that 
+			solution which goes beyond simply looking at its loss. As previously discussed 
+			in sections 1 and 2, it is generally accepted that flatter minima 
+			result in improved generalization capabilities. We hypothesized that 
 			increased flatness (induced by increased model capacity) would align with 
-			improved generalization capabilities.<br><br>
+			improved generalization capabilities. To test this hypothesis, 
+			we studied the generalization gaps from the low-loss Bezier curves.
+			
+			However, the results from the CIFAR-10 dataset only <strong>mildly support</strong> our 
+			hypothesis while the results for CIFAR-100 actually <strong>go against</strong> it. 
+			We believe this inconsistency can be explained by the model capacities used 
+			in our study. <br><br>
+			
+			<img src="./images/gen_gap_v1.png" width=512px/>
 
-            For the CIFAR-10 dataset, the generalization gap follows the double descent 
-			phenomenon, and the results support our hypothesis that low sharpness 
+            As can be seen in the plot above, for the CIFAR-10 dataset, the generalization gap follows 
+			the double descent 
+			phenomenon, and the results in the plot below support our hypothesis that low sharpness 
 			(induced by overparameterization) leads to improved generalization along 
 			the entire length of the low-loss path. However, the evidence is only mildly 
 			supportive. We believe the interpolation threshold occurs around 0.5M parameters,
-			but most of our model capacities fall above this threshold.<br><br>
+			but most of our model capacities fall above this threshold.
+			<br>
+			Additionally, we do not have a fine range of data in the ”classical” regime showing the lead-up
+			to the interpolation threshold, and we believe a model larger than ResNet-119 would better
+			illustrate the behavior in the ”modern” interpolating regime. Therefore, to produce stronger
+			support for our claims and better characterize the relationship between overparameterization,
+			sharpness, and generalization, our future work with the CIFAR-10 dataset intends to study
+			models with new sizes such as 0.01M, 0.3M, 0.5M, and 2M. 
+			<br><br>
 
-            For CIFAR-100, the results do not support our hypothesis that links overparameterization, 
+            For CIFAR-100, the results in the right-hand side of the plot below, do 
+			not support our hypothesis that links overparameterization, 
 			sharpness, and generalization. We believe this is because we have not yet reached 
-			the interpolation threshold. While the training error decreases each time model 
-			capacity is increased, the generalization gap only increases. We believe the interpolation 
-			threshold is near 1.2M parameters as that is the first time the training error 
-			approaches 0%.
+			the interpolation threshold. This is supported by the right-hand side of the figure
+			above which shows that while the training error decreases each time model capacity is increases, 
+			the generalization gap only increases.
+			We believe the interpolation threshold is near 1.2M parameters as that is the first time the training error 
+			approaches 0%.<br>
+			Due to the large computational requirements to
+			train a ResNet-119 model, it was not within the scope of our timeline to train a larger model.
+			Given additional time, optimization hyperparameters could be adjusted in an attempt to reach
+			the interpolation threshold earlier. Alternatively, compute resources aside, models of larger sizes
+			such as 2M and 5M could also provide valuable data. We believe these larger models would go
+			above the interpolation threshold and generate support for our hypothesis.
+
+			<img src="./images/gen_gap_v2.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						The double descent phenomenon describes how test error can decrease again after initially increasing with model complexity.
@@ -802,7 +831,13 @@ and the distance between minima
 				</div>
 		    <div class="main-content-block">
 						<h1>5. Conclusion</h1>
-            This project performed a systematic, quantitative geometric analysis of the loss landscape for ResNet architectures of varying depth, helping bridge the gap between theoretical properties of the optimization landscape and empirical model performance. Our findings support many core tenets of existing literature on mode connectivity, provide new information about the geometric properties of the connecting low-loss paths, and highlight novel, counter-intuitive insights that warrant further research.
+            This project performed a systematic, quantitative geometric analysis of the loss landscape for
+			ResNet architectures of varying depth, helping bridge the gap between theoretical properties of
+			the optimization landscape and empirical model performance. Our findings support many core
+			tenets of existing literature on mode connectivity, provide new information about the geometric
+			properties of the connecting low-loss paths, and highlight novel, counter-intuitive insights that
+			warrant further research.
+
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
