@@ -267,10 +267,16 @@ more principled design and training strategies of deep learning models.
 			For comparison, we also evaluated the straight-line interpolation 
 			between A and B, as well as geometric properties of the plane spanned 
 			by the three points.
-			
-			<br><br> The path was parametrized using established interpolation schemes: Bezier curve, and piecewise linear. In addition, we computed the loss on a grid of points across this plane in order
-to visualize local variations in loss away from the optimized path.<br><br>
-            Along each path we evaluated: training and test loss, curvature metrics, maximum barrier height, and generalization gap. This procedure allowed us to compare different architectures not only in terms of whether a low-loss path existed, but also the geometry of it.
+
+			<br><br> The path was parametrized using established interpolation 
+			schemes: <strong>Bezier curve</strong>, and <strong>piecewise linear (PolyChain)</strong>. 
+			In addition, we computed 
+			the loss on a grid of points across this plane in order
+			to visualize local variations in loss away from the optimized path.<br><br>
+
+            Along each path we evaluated: training and test loss, curvature metrics, maximum barrier height, and 
+			generalization gap. This procedure allowed us to compare different architectures 
+			not only in terms of whether a low-loss path existed, but also the geometry of it.
 		    </div>
 		    <div class="margin-right-block">
 						We used piecewise linear paths and Bezier curves to search for low-loss paths between independently trained models.<br><br><br><br><br>Along each path, loss, curvature, maximum barrier height, and generalization gap was measured. 
@@ -283,13 +289,17 @@ to visualize local variations in loss away from the optimized path.<br><br>
 				</div>
 		    <div class="main-content-block">
 						<h2>3.1 Network Architecture</h2>
-            To investigate how mode connectivity and loss-landscape geometry varies as a function of architectural complexity, we compared several variants of the same neural network family. Specifically, we evaluated five residual networks of increasing depth: ResNet-8, ResNet-26, ResNet-38, ResNet-65, and ResNet-119.<br><br>
+            To investigate how mode connectivity and loss-landscape geometry varies as a function of 
+			architectural complexity, we compared several variants of the same neural network family. 
+			Specifically, we evaluated five residual networks of increasing depth: ResNet-8, ResNet-26, 
+			ResNet-38, ResNet-65, and ResNet-119.<br><br>
 
             Residual networks (ResNets) introduce skip connections that allow information to bypass nonlinear layers, enabling efficient optimization of deep architectures and mitigating vanishing gradients <a href="#ref_15">[15]</a>. Beyond their practical advantages, ResNets serve as a useful test case for loss-landscape analysis. Their residual block structure with skip connections and ease of scalability leads to loss landscapes with nontrivial geometry <a href="#ref_9">[9, 16]</a>, while still being compact enough to train extensively under controlled conditions <a href="#ref_1">[1]</a>. 
 			 We restrict our study to a
 single architectural family rather than comparing radically different model types for two reasons:<br><br>
 			<ul>
 				<li>Varying depth within the same architecture allows us to isolate the effect of overparameterization without confounding differences in inductive biases or other factors.</li>
+				<br>
 				<li>Exploring mode connectivity requires repeated training, interpolation, and evaluation across
 networks, which scales unfavorably with architecture complexity. Restricting to a single
 family keeps the computational cost feasible.</li>
@@ -324,7 +334,8 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 
 		    </div>
 		    <div class="margin-right-block">
-						ResNets were chosen because they outperform plain CNNs on image recognition tasks and have well-studied loss landscapes.
+						ResNets were chosen because they outperform plain CNNs on image recognition tasks 
+						and have well-studied loss landscapes.
 		    </div>
 		</div>
 
@@ -333,9 +344,13 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 				</div>
 		    <div class="main-content-block">
 						<h2>3.2 Datasets</h2>
-            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 training and 10,000 test images, covering everyday object categories.<br><br>
+            We conducted experiments on two widely used image-classification benchmarks: CIFAR-10 and 
+			CIFAR-100. Each dataset consists of 60,000 RGB images of size 32×32, split into 50,000 
+			training and 10,000 test images, covering everyday object categories.<br><br>
 
-            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
+            The two datasets differ primarily in granularity: CIFAR-10 has 10 classes with 6,000 images per class, 
+			while CIFAR-100 has 100 classes with 600 images per class. CIFAR-100 poses a more challenging classification 
+			problem due to the fact that it has fewer images per category. This typically results in lower test accuracy, and will potentially also affect the loss landscape.
 		    </div>
 		    <div class="margin-right-block">
 						The CIFAR-10 and CIFAR-100 datasets were chosen for their strong baselines and computational feasibility for exhaustive experimentation.
@@ -384,7 +399,7 @@ beyond weight decay and the learning rate schedule
 		    <div class="main-content-block">
 						<h2>3.5 Compute Hardware</h2>
 All models were trained on a single L4 or A100 GPU using Google Colab Pro. Training, path
-search, and path analysis for each model required a total of 1-7 hours. Including experiments
+search, and path analysis required a total of 1-7 hours, for each model. Including experiments
 which did not pan out, the total number of compute units used for this project is between
 320-380.
 		    </div>
@@ -413,13 +428,13 @@ we define the barrier height as the difference between the maximum and minimum l
 along the path. Intuitively, this measures the “cost” of traveling between two minima: a high
 barrier implies that the path crosses a region of poor performance, while a nearly flat barrier
 indicates a smooth and well-connected landscape. We compute barrier height for two different
-interpolation regimes: the computed low-loss path (Bezier and Polychain), and the straight-line
+interpolation regimes: the computed low-loss path (Bezier and PolyChain), and the straight-line
 interpolation between the two endpoints. Barrier height can be evaluated on the training loss,
 test loss, or the generalization gap.
 
 
-				<h2>3.6.2 Angle</h2>
-Many curve-based interpolation methods, such as Bezier curves or polychains, introduce a middle
+				<h3>3.6.2 Angle</h3>
+Many curve-based interpolation methods, such as Bezier curves or PolyChains, introduce a middle
 point that is optimized to minimize loss along the path. The relative position of this middle point
 provides a proxy for how “curved” the low-loss path must be in order to connect the two solutions.
 Conceptually, if the middle point lies close to the straight segment connecting the endpoints, the
@@ -483,6 +498,7 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 						<h2>4.1 Convex Combination</h2>
             A convex combination of two minima corresponds to a linear interpolation between their 
 			parameter vectors. The path can be represented as 
+			<br><br>
 			<math display="block">
   <mrow>
     <!-- θ(t) -->
@@ -517,15 +533,15 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
     <mo>[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>]</mo>
   </mrow>
 </math>
-			Studying such linear paths is useful because it provides a simple baseline for understanding
-the geometry of the loss landscape: any drop in performance along this line indicates a barrier
-between the minima. It is important to note that the observed barrier height along a convex
-combination can be large simply because the path is linear, and not necessarily because the
-minima are inherently separated. Higher-order paths, presented in Section 4.2, may circumvent
-these high-loss regions and reveal more connected low-loss trajectories.<br><br>
+			<br>Studying such linear paths is useful because it provides a simple baseline for understanding
+			the geometry of the loss landscape: any drop in performance along this line indicates a barrier
+			between the minima. It is important to note that the observed barrier height along a convex
+			combination can be large simply because the path is linear, and not necessarily because the
+			minima are inherently separated. Higher-order paths, presented in Section 4.2, may circumvent
+			these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 
 
-			As can be seen in the plot below, across architectures, straight-line interpolation caused 
+			As can be seen in the plot below - across architectures - straight-line interpolation caused 
 			similarly large accuracy drops.
 			Effectively showing that increased model 
 			complexity does not reduce barrier height along linear paths. However, larger 
@@ -679,7 +695,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 </div>
 
 
-            <br>Since ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
+            Since the two norms ||A - C|| and ||B - C|| are close to each other, the low-loss path is roughly symmetric, 
 			and therefore we can reliably use the interior angle ∠ACB as a proxy for the path's 
 			degree of nonlinearity. Smaller angles correspond to a larger outward displacement of 
 			C and therefore to a more strongly curved low-loss path.<br><br>
