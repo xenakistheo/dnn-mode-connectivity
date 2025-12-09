@@ -1,36 +1,3 @@
-#!/usr/bin/env python3
-"""
-Interpolate between two trained checkpoints and evaluate accuracy along the linear path.
-
-Quick description
-- This script builds models with parameters (1-t)*W_a + t*W_b for t in [0,1] and evaluates them.
-- It is device-aware (auto-detects MPS/CUDA/CPU) and recomputes BatchNorm running stats if requested.
-
-Usage examples
-1) Auto device detection, recompute BN stats, 21 points:
-   python convex_combo.py \
-     --ckpt_a path/to/checkpoint_A.pt \
-     --ckpt_b path/to/checkpoint_B.pt \
-     --model resnet20 \
-     --steps 21 \
-     --recompute_bn
-     --data_path ./data
-
-2) Force MPS device (macOS):
-   python convex_combo.py --ckpt_a A.pt --ckpt_b B.pt --model resnet20 --device mps --recompute_bn
-
-3) Force CPU and save results to CSV:
-   python convex_combo.py --ckpt_a A.pt --ckpt_b B.pt --model resnet20 --device cpu --steps 11 --save_csv results.csv
-
-Notes
-- Checkpoints saved by train.py typically contain a 'model_state' key. The script extracts that automatically.
-- If your checkpoints come from CurveNet (trained with --curve), their state dict layout is different (interleaved bend parameters). In that case:
-    - Export base parameters using CurveNet.export_base_parameters for each checkpoint into plain base-model checkpoints, then run this script on those base checkpoints; OR
-    - Ask me and I can modify this script to interpolate curve-format checkpoints directly.
-- Use --recompute_bn to refresh BatchNorm running_mean/var using data from the train loader. This usually improves evaluation accuracy for interpolated models.
-"""
-
-
 import argparse
 import os
 import sys

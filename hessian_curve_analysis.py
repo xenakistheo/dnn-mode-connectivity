@@ -1,45 +1,10 @@
-"""
-Standalone script to evaluate loss, generalization gap, and Hessian metrics along a learned curve.
-
-What it does
-- Samples NUM_POINTS t values along a curve checkpoint (CurveNet).
-- For each t it computes training & test NLL/loss/accuracy (using utils.update_bn and utils.test).
-- For a small set of HESSIAN_K points it computes:
-    * lambda_max: top Hessian eigenvalue (approx) via power iteration using Hessian-vector products (HVP)
-    * Hutchinson trace estimator of the Hessian: E[v^T H v] using Rademacher vectors
-
-Globals you can change at the top of the file:
-- NUM_POINTS: number of t values to sample for loss / gap evaluation (the "test points" you asked for)
-- HESSIAN_K: number of t values (evenly spaced) where Hessian metrics are computed
-- HESSIAN_BATCH_SIZE: batch size used for Hessian estimations
-- HUTCHINSON_SAMPLES: number of Hutchinson probe vectors
-- POWER_ITERS: iterations of power method to estimate top eigenvalue
-- HV_BATCHES: number of mini-batches to average over for each Hutchinson probe (small -> faster, noisier)
-
-How to run (example)
- python3 hessian_curve_analysis.py \
-   --curve_dir ./runs/curve_vgg \
-   --curve_ckpt ./runs/curve_vgg/checkpoint-200.pt \
-   --dataset CIFAR10 --data_path ./data --model VGG16 --curve Bezier --num_bends 3 \
-   --use_test --num_workers 0
-
-Outputs
-- Prints progress and results.
-- Saves a file curve_hessian.npz into --out_dir (contains ts, losses, accs, gen_gap and arrays of hessian metrics at HESSIAN_K points).
-
-Notes / caveats
-- Hessian computations are expensive. Defaults are conservative: HESSIAN_K=3, POWER_ITERS=20, HUTCHINSON_SAMPLES=20.
-- For CurveNet we materialize weights(t) and copy them into a fresh base model before doing Hessian computations (this makes autograd simpler).
-- Hutchinson and power-iteration use a small number of training samples (single mini-batch by default). Increase HV_BATCHES and/or use more samples for more stable estimates.
-"""
-
 import argparse
 import os
 import time
 import numpy as np
 import torch
 import torch.nn.functional as F
-
+from torch.utils.data import DataLoader
 import data
 import models
 import curves
@@ -381,10 +346,8 @@ def main():
 
     # Prepare a small data loader for Hessian estimation (use training loader but with smaller batch size)
     # We'll sample from the training DataLoader; create a DataLoader with HESSIAN_BATCH_SIZE
-    from torch.utils.data import DataLoader
-    # Use the full training dataset for sampling (not the Subset loader) - get original dataset object
-    # data.loaders returned a DataLoader or Subset; to be robust, we create a simple loader from train dataset
-    # Attempt to extract train dataset:
+    
+    
     train_dataset = loaders['train'].dataset
     # If it's a Subset, get underlying dataset
     try:
@@ -404,9 +367,7 @@ def main():
         # assign to base_model parameters in order
         assign_flat_to_model(flat_np, base_model)
         base_model.eval()
-        # make sure batch-norm buffers are present (we can import buffers from a base endpoint if desired)
-        # Update BN using utils.update_bn but it expects a curve model with t arg. Instead update base_model BN by forward passes:
-        # Use utils.update_bn with a small wrapper: pass model=base_model but it expects isbatchnorm detection; that's fine.
+
         try:
             utils.update_bn(hess_loader, base_model)
         except Exception:
@@ -427,14 +388,6 @@ def main():
         end = time.time()
         print(f"hess t={tval:.3f} Hutchinson trace ≈ {trace_est:.6e} (time {end-start:.1f}s)")
         hess_trace[k_idx] = trace_est
-
-        # power iteration for largest eigenvalue
-        # start = time.time()
-        # lambda_est = power_iteration_top_eigenvalue(base_model, hess_loader, criterion, device,
-        #                                             power_iters=POWER_ITERS, hv_batches=HV_BATCHES)
-        # end = time.time()
-        # print(f"hess t={tval:.3f} lambda_max ≈ {lambda_est:.6e} (time {end-start:.1f}s)")
-        # hess_lambda[k_idx] = lambda_est
 
         # power iteration for top k eigenvalues
         start = time.time()
