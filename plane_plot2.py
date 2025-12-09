@@ -13,7 +13,7 @@ paths = [
     "./plane_data/ResNet119_CIFAR10_Bezier/plane.npz"
 ]
 
-resnet_labels = ["ResNet8", "ResNet26", "ResNet38", "ResNet65", "ResNet119"]
+resnet_labels = ["ResNet-8", "ResNet-26", "ResNet-38", "ResNet-65", "ResNet-119"]
 
 out_dir = os.path.dirname(paths[0])
 
@@ -166,7 +166,7 @@ make_figure(
     title="Training Loss Plane",
     vmax=5.0,
     log_alpha=-5.0,
-    filename="train_loss_planes_5x1.pdf"
+    filename="train_loss_planes_cifar10.pdf"
 )
 
 make_figure(
@@ -174,5 +174,5 @@ make_figure(
     title="Test Error Plane",
     vmax=40,
     log_alpha=-1.0,
-    filename="test_error_planes_5x1.pdf"
+    filename="test_loss_planes_cifar10.pdf"
 )
