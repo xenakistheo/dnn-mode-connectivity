@@ -526,7 +526,7 @@ these high-loss regions and reveal more connected low-loss trajectories.<br><br>
 			remains possible that barrier height decreases along curved paths, which will be examined 
 			next.
 
-			<img src="./images/convexCombinations.png" width=512px/>
+			<img src="./images/convexCombinations.png" width=1024px/>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						Linear paths provide a baseline for understanding loss landscape geometry, but may not reveal the true connectivity between minima.
@@ -721,7 +721,7 @@ and the distance between minima
 			find solutions in sharper minima compared to larger models like ResNet-119 which 
 			opt instead for flatter, wider basins. This <strong>supports</strong>our hypothesis.<br><br>
 			
-			<img src="./images/bezier_sharpness.png" width=512px/>
+			<img src="./images/bezier_sharpness.png" width=1024px/>
             However, despite the low barrier height for a large model like ResNet-119, our 
 			results show that the sharpness still changes by a factor of 2 between the 
 			endpoints and the midpoint of the low-loss path. To ensure that this behavior 
@@ -729,7 +729,7 @@ and the distance between minima
 			eigenvalues of the Hessian was studied, which supported the behavior exhibited 
 			by the largest eigenvalue alone. The results can be seen below.<br><br>
 
-			<img src="./images/bezier_top5eig.png" width=512px/>
+			<img src="./images/bezier_top5eig.png" width=1024px/>
 
             The sharpness behavior highlights that a low loss alone might not be enough to 
 			classify a path as consisting of truly equivalent solutions. This can be relevant 
@@ -795,7 +795,7 @@ and the distance between minima
 			We believe this inconsistency can be explained by the model capacities used 
 			in our study. <br><br>
 			
-			<img src="./images/gen_gap_v1.png" width=512px/>
+			<img src="./images/gen_gap_v1.png" width=1024px/>
 
             As can be seen in the plot above, for the CIFAR-10 dataset, the generalization gap follows 
 			the double descent 
@@ -828,7 +828,7 @@ and the distance between minima
 			such as 2M and 5M could also provide valuable data. We believe these larger models would go
 			above the interpolation threshold and generate support for our hypothesis.
 
-			<img src="./images/gen_gap_v2.png" width=512px/>
+			<img src="./images/gen_gap_v2.png" width=1024x/>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
 						The double descent phenomenon describes how test error can decrease again after initially increasing with model complexity.
