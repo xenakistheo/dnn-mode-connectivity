@@ -848,16 +848,46 @@ and the distance between minima
 				</div>
 		    <div class="main-content-block">
 						<h2>5.1 Key Findings</h2>
-            Our analysis of the Bezier-optimized low-loss paths revealed a clear evolution of the loss landscape with increased network depth:<br><br>
 
-            <b>Mode Connectivity and Barrier Height:</b> We confirmed that increased network depth reduces the barrier height along the curved paths between distinct solutions. Test accuracy loss along the path dropped from over 7% for the shallowest model (ResNet-8) to ~2% for the deepest models, indicating that overparameterization creates a smoother, more easily traversable loss manifold.<br><br>
+				Our analysis of the Bezier-optimized low-loss paths 
+				revealed a clear evolution of the loss landscape 
+				with increased network depth:
 
-            <b>Sharpness and Robustness:</b> We verified the hypothesis that deeper networks tend to converge to flatter minima, which literature associates with improved generalization. We demonstrated that sharpness is not uniform along the low-loss path, varying by a factor of 2 even when the loss and barrier height remain minimal.<br><br>
+			<ul>
+				<li><b>Mode Connectivity and Barrier Height:</b><br> We confirmed that 
+					increased network depth reduces the barrier height along the 
+					curved paths between distinct solutions. Test accuracy loss along 
+					the path dropped from over 7% for the shallowest model (ResNet-8) to ~2% 
+					for the deepest models, indicating that overparameterization creates 
+					a smoother, more easily traversable loss manifold.
+				</li>
 
-            <b>Path Curvature:</b> Contrary to our initial hypothesis, the low-loss paths connecting minima in deeper networks were found to be more strongly curved. This suggests that while overparameterization creates broad, connected basins, the optimizer must exploit higher-order non-linearities in parameter space to navigate the lowest-loss routes between them.<br><br>
+				<br>
+				<li><b>Sharpness and Robustness:</b><br> We verified the hypothesis 
+					that deeper networks tend to converge to flatter minima, 
+					which literature associates with improved generalization. 
+					We demonstrated that sharpness is not uniform along the low-loss path, 
+					varying by a factor of 2 even when the loss and barrier height remain minimal.
+				</li>
 
-            <b>Generalization Gap:</b> The inconsistency in the generalization gap results between CIFAR-10 and CIFAR-100 suggests that decreased sharpness alone is insufficient to guarantee improved generalization, and that the benefits may only manifest past the interpolation threshold. This requires further investigation with larger models.
-		    </div>
+				<br>
+				<li><b>Path Curvature:</b><br> Contrary to our initial hypothesis, 
+					the low-loss paths connecting minima in deeper networks were 
+					found to be more strongly curved. This suggests that while 
+					overparameterization creates broad, connected basins, the optimizer 
+					must exploit higher-order non-linearities in parameter space to 
+					navigate the lowest-loss routes between them.
+				</li>
+				<br>
+
+				<li><b>Generalization Gap:</b><br>The inconsistency in the generalization 
+					gap results between CIFAR-10 and CIFAR-100 suggests that decreased 
+					sharpness alone is insufficient to guarantee improved generalization, 
+					and that the benefits may only manifest past the interpolation threshold. 
+					This requires further investigation with larger models.
+					</li>
+			</ul>
+            		    </div>
 		    <div class="margin-right-block">
 		    </div>
 		</div>
@@ -867,12 +897,29 @@ and the distance between minima
 				</div>
 		    <div class="main-content-block">
 						<h2>5.2 Significance</h2>
-            The primary significance of this work lies in its quantitative findings, which move beyond the mere existence of low-loss paths to characterize their geometry.<br><br>
+            The primary significance of this work lies in its quantitative findings, 
+			which move beyond the mere <em>existence</em> of low-loss paths to characterize their <em>geometry</em>.<br><br>
+			
+			<ol>
+				<li> <b>Theoretical Advancement:</b><br> The observed variation in sharpness 
+					along the path has profound implications for ensemble methods. 
+					It shows that traversing the loss manifold yields solutions that are not 
+					functionally equivalent in terms of robustness, necessitating that 
+					ensemble generation strategies incorporate sharpness as a selection criterion, 
+					not just low loss.
+				</li>
 
-            <b>Theoretical Advancement:</b> The observed variation in sharpness along the path has profound implications for ensemble methods. It shows that traversing the loss manifold yields solutions that are not functionally equivalent in terms of robustness, necessitating that ensemble generation strategies incorporate sharpness as a selection criterion, not just low loss.<br><br>
-
-            <b>Principled Model Design:</b> By establishing a clear, quantitative link between network depth and geometric metrics (barrier height, sharpness), our results enable more principled model design. Researchers can now anticipate the topological characteristics of the loss landscape induced by architectural choices and make more intelligent decisions on model architecture and optimizer selection.
-		    </div>
+				<br>
+				<li><b>Principled Model Design:</b><br> By establishing a clear, 
+					quantitative link between network depth and geometric metrics 
+					(barrier height, sharpness), our results enable more principled model 
+					design. Researchers can now anticipate the topological characteristics 
+					of the loss landscape induced by architectural choices and make more 
+					intelligent decisions on model architecture and optimizer selection.
+				</li>
+			</ol>
+           
+            	    </div>
 		    <div class="margin-right-block">
 		    </div>
 		</div>
@@ -882,16 +929,47 @@ and the distance between minima
 				</div>
 		    <div class="main-content-block">
 						<h2>5.3 Future Work</h2>
-            Given the fundamental nature of our findings and the computational constraints of this study, several avenues for future research are warranted:<br><br>
+            Given the fundamental nature of our findings and the computational constraints of this 
+			study, several avenues for future research are warranted:<br><br>
 
-            <b>Architectural Universality Testing:</b> It would be valuable to apply these techniques to more complex and fundamentally different architectures, such as Transformers. The primary objective is to investigate if the observed geometric phenomena are universal properties of deep neural networks or if they are tied to specific model types, and to explore if modern complex architectures, where theory is harder to apply <a href="#ref_19">[19]</a>, present new phenomena.<br><br>
+			<ol>
+				<li><b>Architectural Universality Testing:</b><br> It would be valuable to 
+					apply these techniques to more complex and fundamentally different 
+					architectures, such as Transformers. The primary objective is to investigate 
+					if the observed geometric phenomena are universal properties of deep neural 
+					networks or if they are tied to specific model types, and to explore if 
+					modern complex architectures, where theory is harder to apply <a href="#ref_19">[19]</a>, 
+					present new phenomena.
+				</li>
+				<br>
+				<li><b>Efficiency of Path Discovery:</b><br>A deeper exploration 
+					is needed into the conditions under which the low-loss path 
+					transitions to being linear or near-linear. A computationally 
+					powerful result would involve predicting the existence and geometry 
+					of low-loss paths in complex architectures, similar to recent work 
+					on predicting optimizer dynamics <a href="#ref_20">[20]</a>, which 
+					could lead to novel insights into the loss landscape itself.
+				</li>
+				<br>
+				<li><b>Scaling to the Interpolating Regime:</b><br> Future work should 
+					extend the CIFAR-100 analysis into the "modern interpolating regime". 
+					This is necessary to fully characterize the generalization gap inconsistency 
+					and verify whether the benefits of increased capacity only manifest past 
+					the interpolation threshold.
+				</li>
+				<br>
+				<li>  <b>Optimizer Influence on Path Geometry:</b><br> The counter-intuitive 
+					observation of increasing path curvature warrants investigation into how 
+					different optimizer regularization techniques and hyperparameter settings 
+					might affect the non-linearity of the low-loss paths, aiming to identify 
+					methods that promote straighter, lower-curvature trajectories.
+				</li>
+			</ol>
 
-            <b>Efficiency of Path Discovery:</b> A deeper exploration is needed into the conditions under which the low-loss path transitions to being linear or near-linear. A computationally powerful result would involve predicting the existence and geometry of low-loss paths in complex architectures, similar to recent work on predicting optimizer dynamics <a href="#ref_20">[20]</a>, which could lead to novel insights into the loss landscape itself.<br><br>
-
-            <b>Scaling to the Interpolating Regime:</b> Future work should extend the CIFAR-100 analysis into the "modern interpolating regime". This is necessary to fully characterize the generalization gap inconsistency and verify whether the benefits of increased capacity only manifest past the interpolation threshold.<br><br>
-
-            <b>Optimizer Influence on Path Geometry:</b> The counter-intuitive observation of increasing path curvature warrants investigation into how different optimizer regularization techniques and hyperparameter settings might affect the non-linearity of the low-loss paths, aiming to identify methods that promote straighter, lower-curvature trajectories.
-		    </div>
+            
+            
+            
+          	    </div>
 		    <div class="margin-right-block">
 		    </div>
 		</div>
