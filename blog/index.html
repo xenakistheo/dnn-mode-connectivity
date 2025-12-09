@@ -166,7 +166,7 @@ Rather than being isolated points, these minima are linked, making it possible t
 loss landscape along a smooth path without encountering significant barriers in loss.
 <br><br>
 Most existing research has focused on the general existence of such low-loss paths. However,
-less attention has been paid to the detailed geometric properties, such as sharpness or curvature,
+less attention has been paid to the detailed geometric properties, such as sharpness or curvature
 of these paths and how they evolve quantitatively with the degree of overparameterization. A
 quantitative analysis of this geometric evolution is crucial for identifying key factors that govern
 the loss landscape and generalization performance. This understanding can be instrumental to
@@ -209,8 +209,11 @@ more principled design and training strategies of deep learning models.
             The hypotheses for our work include:
 			<ul>
 				<li> <b> Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.</li>
+				<br>
 				<li><b>Path Curvature Decreases with Overparameterization</b> <br>The curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.</li>
+				<br>
 				<li><b>Increased Overparameterization Correlates with Flatter Minima</b> <br>As the network's depth increases, the local minima found by the optimizer will become flatter. Flatter minima are generally associated with better generalization.</li>
+				<br>
 				<li><b>Path Geometry Directly Predicts Generalization</b> <br>A measurable correlation exists between the geometric properties (low barrier height, low curvature, low sharpness) of the found paths and the final test accuracy of the models, thereby providing a quantitative predictor for generalization performance beyond simply training loss.</li>
 			</ul>
 
@@ -250,11 +253,25 @@ reliable and interpretable models.
 				</div>
 		    <div class="main-content-block">
 						<h1>3. Methods & Experiments</h1>
-			Before introducing the specific metrics, we briefly summarize the overall methodology used to
-generate the objects we evaluated.<br><br>
-            For each network architecture, we trained two independent models from different random initializations. Each training run produced a set of parameters, denoted A and B, which corresponded to distinct minima of the loss landscape. Using these two solutions as endpoints, we then constructed a low-loss connecting curve in parameter space by introducing and optimizing a third point, C, which defined a nonlinear interpolation between A and B.<br><br>
+			Before introducing the specific metrics, we briefly summarize the overall 
+			methodology used to
+			generate the objects we evaluated.<br><br>
+            For each network architecture, we trained two independent 
+			models from different random initializations. 
+			Each training run produced a set of parameters, 
+			denoted A and B, which corresponded to distinct 
+			minima of the loss landscape. Using these two solutions 
+			as endpoints, we then constructed a low-loss connecting 
+			curve in parameter space by introducing and optimizing a 
+			third point, C, which defined a nonlinear interpolation 
+			between A and B.<br><br>
 
-            This resulted in a parameterized path passing through (A, C, B), along which we sampled and evaluated loss, curvature, and sharpness. For comparison, we also evaluated the straight-line interpolation between A and B, as well as geometric properties of the plane spanned by the three points.
+            This resulted in a parameterized path passing through (A, C, B), 
+			along which we sampled and evaluated loss, curvature, and sharpness.
+			For comparison, we also evaluated the straight-line interpolation 
+			between A and B, as well as geometric properties of the plane spanned 
+			by the three points.
+			
 			<br><br> The path was parametrized using established interpolation schemes: Bezier curve, and piecewise linear. In addition, we computed the loss on a grid of points across this plane in order
 to visualize local variations in loss away from the optimized path.<br><br>
             Along each path we evaluated: training and test loss, curvature metrics, maximum barrier height, and generalization gap. This procedure allowed us to compare different architectures not only in terms of whether a low-loss path existed, but also the geometry of it.
@@ -686,7 +703,7 @@ and the distance between minima
 			generalization capabilities of a trained model. Our analysis reveals that, 
 			for the same optimizer hyperparameters, smaller models like ResNet-8 tend to 
 			find solutions in sharper minima compared to larger models like ResNet-119 which 
-			opt instead for flatter, wider basins. This <strong>supports</strong>our hypothesis.<br><br>
+			opt instead for flatter, wider basins. This <strong>supports</strong> our hypothesis.<br><br>
 			
 			<img src="./images/bezier_sharpness.png" width=1024px/>
             However, despite the low barrier height for a large model like ResNet-119, our 
