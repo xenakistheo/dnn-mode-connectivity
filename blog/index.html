@@ -208,7 +208,7 @@ more principled design and training strategies of deep learning models.
 						<h2>1.2 Hypotheses</h2>
             The hypotheses for our work include:
 			<ul>
-				<li> <b> Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum loss along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.</li>
+				<li> <b> Lower Barrier Heights Accompany Deeper Networks</b> <br>Increased network depth will lead to lower barrier heights (smaller maximum change in accuracy along the path) between connected minima. This suggests that the loss landscape becomes smoother and more connected as overparameterization increases.</li>
 				<br>
 				<li><b>Path Curvature Decreases with Overparameterization</b> <br>The curvature of the low-loss paths connecting distinct solutions will decrease as network depth increases, indicating that the mode connectivity approaches a linear relationship.</li>
 				<br>
@@ -279,7 +279,7 @@ more principled design and training strategies of deep learning models.
 			not only in terms of whether a low-loss path existed, but also the geometry of it.
 		    </div>
 		    <div class="margin-right-block">
-						We used piecewise linear paths and Bezier curves to search for low-loss paths between independently trained models.<br><br><br><br><br>Along each path, loss, curvature, maximum barrier height, and generalization gap was measured. 
+						We used piecewise linear paths and Bezier curves to search for low-loss paths between independently trained models.<br><br><br><br><br>Along each path, loss, curvature, barrier height, and generalization gap was measured. 
 		    </div>
 			
 		</div>
@@ -640,7 +640,6 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 
 			<br><br>
 
-			<br><br>
 			The two types of curves considered is the (quadratic) Bezier curve
 			<br><br>
 			<math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -865,13 +864,18 @@ and how locally stable the solutions are along the path.
 
 						<h2>3.6.1 Barrier Height</h2>
 			Given a parameterized path between two independently trained models, sampled at N points,
-we define the barrier height as the difference between the maximum and minimum loss observed
+we define the barrier height as the difference between the maximum and minimum accuracy observed
 along the path. Intuitively, this measures the “cost” of traveling between two minima: a high
 barrier implies that the path crosses a region of poor performance, while a nearly flat barrier
 indicates a smooth and well-connected landscape. We compute barrier height for two different
 interpolation regimes: the computed low-loss path (Bezier and PolyChain), and the straight-line
-interpolation between the two endpoints. Barrier height can be evaluated on the training loss,
-test loss, or the generalization gap.
+interpolation between the two endpoints. Barrier height can be evaluated on the training accuracy,
+test accuracy, or the generalization gap. From the sampled accuracy along the path we also compute the 
+Area Under the Curve (AUC), which captures the total loss accumulated along the path. 
+Instead of integrating over the entire interpolation range, we restrict the calculation to 
+the segment between the points where accuracy reaches its minimum and maximum values. This 
+helps distinguish models that share the same barrier height but differ in how much of the path 
+exhibits elevated loss.
 
 
 				<h3>3.6.2 Angle</h3>
@@ -887,7 +891,8 @@ space, and compute the angles of the triangle, and the area of the triangle give
 between endpoints is fixed.
 
 				<h2>3.6.3 Sharpness</h2>
-While barrier height and curvature reflect global properties of the path, we also desire to characterize the local geometry of the landscape around the low-loss solutions. Specifically, we are
+While barrier height and curvature reflect global properties of the path, we also desire to characterize 
+the local geometry of the landscape around the low-loss solutions. Specifically, we are
 interested in whether the path corresponds to flat, stable basins or sharp, narrow valleys. Flat
 regions are typically associated with improved generalization, robustness, and lower sensitivity
 to perturbations. A natural way to quantify local geometry is through the Hessian matrix, which
