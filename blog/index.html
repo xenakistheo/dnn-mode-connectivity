@@ -334,8 +334,8 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 
 		    </div>
 		    <div class="margin-right-block">
-						ResNets were chosen because they outperform plain CNNs on image recognition tasks 
-						and have well-studied loss landscapes.
+						Using one architecture isolates depth effects and keeps computation manageable.
+						ResNets were chosen because they outperform plain CNNs on image recognition tasks.
 		    </div>
 		</div>
 
@@ -807,7 +807,8 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 		    </div>
 		    <div class="margin-right-block">
 					<!-- Add text here-->	
-
+					Low-loss paths are found by 
+					optimizing Bezier or PolyChain curves between trained models.
 					<!-- -->
 		    </div>
 		</div>
@@ -1009,7 +1010,7 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
 			</figure>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
-						Linear paths provide a baseline for understanding loss landscape geometry, but may not reveal the true connectivity between minima.
+					Linear paths show large barriers for all models — wider networks just shrink the low-accuracy region.
 		    </div>
 		</div>
 
@@ -1077,7 +1078,7 @@ be achieved via iterative methods such as power iteration <a href="#ref_18">[18]
             
 		    </div>
 		    <div class="margin-right-block">
-						Area Under Curve (AUC) and Peak Height metrics for the CIFAR-100 test set.
+					Larger networks show much smaller accuracy dips along low-loss paths.
 		    </div>
 		</div>
 
@@ -1213,6 +1214,7 @@ and the distance between minima
 		    </div>
 		    <div class="margin-right-block">
 						Sharpness measurements used the top eigenvalues of the Hessian matrix as computed via power iteration.
+					Results show that larger models find flatter minima, but sharpness still varies along the path.
 		    </div>
 		</div>
 
@@ -1250,7 +1252,8 @@ and the distance between minima
 			</figure>
 		    </div>
 		    <div class="margin-right-block">
-						Two-dimensional slices provide insight into the local structure of the high-dimensional loss landscape.
+						Deep networks reshape the landscape into wide, gently sloping valleys. 
+						Small models remain confined to steep, narrow basins.
 		    </div>
 		</div>
 		
@@ -1324,7 +1327,10 @@ and the distance between minima
 
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -50%);">
-						The double descent phenomenon describes how test error can decrease again after initially increasing with model complexity.
+						Generalization improved only mildly with flatness on CIFAR-10 
+						and reversed on CIFAR-100. 
+						The likely cause is that most models lie above the 
+						interpolation threshold for CIFAR-10 but below it for CIFAR-100.
 		    </div>
 		</div>
 
