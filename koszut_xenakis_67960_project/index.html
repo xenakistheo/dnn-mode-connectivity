@@ -240,7 +240,16 @@ more principled design and training strategies of deep learning models.
 			Thus, a significant gap remains in rigorously and empirically linking the degree of overparameterization to the quantitative geometry of the optimization landscape. This motivates a systematic investigation of how overparameterization shapes the geometry of the loss landscape, and how this, in turn, influences key properties like generalization. By studying these aspects in a controlled and thorough manner, we aim to uncover insights that could inform the design of more efficient architectures and optimization strategies, ultimately leading to more reliable and interpretable models.
 		    </div>
 		    <div class="margin-right-block">
-						Flatness-aware optimization strategies like sharpness-aware minimization (SAM) and stochastic weight averaging (SWA) have been developed to actively seek out flat minima.
+				Overparameterized networks tend to form connected, flatter regions of the loss landscape, 
+				which has been linked to better optimization and generalization.
+				<br><br><br><br><br><br><br><br><br><br>
+
+				How these flat, connected regions change with model size remains poorly understood. 
+				Bridging this gap requires studying the geometry of paths between solutions across architectures.
+				<br><br><br><br><br><br><br><br><br><br>
+
+						Flatness-aware optimization strategies like sharpness-aware minimization (SAM) 
+						and stochastic weight averaging (SWA) have been developed to actively seek out flat minima.
 		    </div>
 		</div>
 
