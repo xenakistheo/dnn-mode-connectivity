@@ -362,7 +362,448 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 				</div>
 		    <div class="main-content-block">
 						<h2>3.3 Low-Loss Path Search</h2>
-            #### THIS HAS TO BE FILLED OUT ####
+            To identify a low-loss path between two solutions, we optimize a parameterized curve that 
+			connects the independently trained endpoints. 
+			The procedure for finding this curve is based on the work done by Garipov et. al. <a href="#ref_1">[1]</a>.
+			Let <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>A</mi>
+  </msub>
+  <mo>,</mo>
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>B</mi>
+  </msub>
+  <mo>&#x2208;</mo>
+  <msup>
+    <mi>&#x211D;</mi>
+    <mrow>
+      <mo>|</mo>
+      <mi>net</mi>
+      <mo>|</mo>
+    </mrow>
+  </msup>
+</math>
+
+			be the two sets of weights and biases for the two independently trained 
+			neural networks with the same architecture. |net| is here the number of parameters 
+			of that specific architecture. Our aim is finding a curve in
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>&#x211D;</mi>  <!-- ℝ -->
+    <mrow>
+      <mo>|</mo><mi>net</mi><mo>|</mo>
+    </mrow>
+  </msup>
+</math>
+			connecting those two parameter-endpoints. This translates to finding a continuous function <br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <!-- φ_θ -->
+  <msub>
+    <mi>&#x03C6;</mi>     <!-- φ -->
+    <mi>&#x03B8;</mi>     <!-- θ -->
+  </msub>
+
+  <!-- : -->
+  <mo>:</mo>
+
+  <!-- [0,1] -->
+  <mfenced open="[" close="]">
+    <mn>0,1</mn>
+    
+  </mfenced>
+
+  <!-- → -->
+  <mo>&#x2192;</mo>
+
+  <!-- ℝ^{|net|} -->
+  <msup>
+    <mi>&#x211D;</mi>     <!-- ℝ -->
+    <mrow>
+      <mo>|</mo><mi>net</mi><mo>|</mo>
+    </mrow>
+  </msup>
+</math>
+			<br><br> with the property that
+			<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+  <!-- φ_θ(0) -->
+  <msub>
+    <mi>&#x03C6;</mi>          <!-- φ -->
+    <mi>&#x03B8;</mi>          <!-- θ -->
+  </msub>
+  <mfenced>
+    <mn>0</mn>
+  </mfenced>
+
+  <mo>=</mo>
+
+  <!-- θ_A -->
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>A</mi>
+  </msub>
+
+  <!-- and -->
+  <mtext> &#xA0;and&#xA0; </mtext>
+
+  <!-- φ_θ(1) -->
+  <msub>
+    <mi>&#x03C6;</mi>
+    <mi>&#x03B8;</mi>
+  </msub>
+  <mfenced>
+    <mn>1</mn>
+  </mfenced>
+
+  <mo>=</mo>
+
+  <!-- θ_B -->
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>B</mi>
+  </msub>
+
+  <mo>.</mo>
+</math>
+			Of course, we want the path to be of "low-loss", so we need to 
+			impose some more conditions. As done by Garipov, we restrict 
+			ourselves to a fixed parametric family, so that the problem 
+			reduces to that of finding some set of parameters <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>&#x03B8;</mi>   <!-- θ -->
+    <mi>C</mi>
+  </msub>
+</math>
+			that minimizes <br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <!-- Expectation -->
+  <msub>
+    <mi>&#x1D53C;</mi> <!-- 𝔼 -->
+    <mrow>
+      <mi>t</mi>
+      <mo>&#x223C;</mo> <!-- ∼ -->
+      <msub>
+        <mi>q</mi>
+        <mi>&#x03B8;</mi> <!-- θ -->
+      </msub>
+      <mfenced>
+        <mi>t</mi>
+      </mfenced>
+    </mrow>
+  </msub>
+
+  <mo>[</mo>
+
+  <!-- \mathcal{L} -->
+  <mi mathvariant="script">L</mi>
+
+  <mfenced>
+    <mrow>
+      <msub>
+        <mi>&#x03C6;</mi> <!-- φ -->
+        <mi>&#x03B8;</mi> <!-- θ -->
+      </msub>
+      <mfenced><mi>t</mi></mfenced>
+    </mrow>
+  </mfenced>
+
+  <mo>]</mo>
+</math>
+			<br><br>
+			where
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi mathvariant="script">L</mi>
+</math>
+			is the loss function used to train the endpoints, and <br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+
+  <!-- q_θ(t) -->
+  <msub>
+    <mi>q</mi>
+    <mi>&#x03B8;</mi> <!-- θ -->
+  </msub>
+  <mfenced>
+    <mi>t</mi>
+  </mfenced>
+
+  <!-- := -->
+  <mo>:=</mo>
+
+  <!-- || φ_θ'(t) || -->
+  <mrow>
+    <mo>&#x2225;</mo> <!-- ‖ -->
+    <msup>
+      <msub>
+        <mi>&#x03C6;</mi> <!-- φ -->
+        <mi>&#x03B8;</mi> <!-- θ -->
+      </msub>
+      <mo>'</mo>
+    </msup>
+    <mfenced>
+      <mi>t</mi>
+    </mfenced>
+    <mo>&#x2225;</mo> <!-- ‖ -->
+  </mrow>
+
+  <!-- · -->
+  <mo>&#x22C5;</mo>
+
+  <!-- ( ∫_0^1 || φ_θ'(t) || dt )^{-1} -->
+  <msup>
+    <mfenced>
+      <mrow>
+        <mo>&#x222B;</mo> <!-- ∫ -->
+        <msubsup>
+          <mo></mo>
+          <mn>0</mn>
+          <mn>1</mn>
+        </msubsup>
+
+        <!-- || φ_θ'(t) || -->
+        <mrow>
+          <mo>&#x2225;</mo>
+          <msup>
+            <msub>
+              <mi>&#x03C6;</mi>
+              <mi>&#x03B8;</mi>
+            </msub>
+            <mo>'</mo>
+          </msup>
+          <mfenced>
+            <mi>t</mi>
+          </mfenced>
+          <mo>&#x2225;</mo>
+        </mrow>
+
+        <mi>d</mi><mi>t</mi>
+      </mrow>
+    </mfenced>
+
+    <!-- exponent -1 -->
+    <mrow>
+      <mo>-</mo><mn>1</mn>
+    </mrow>
+  </msup>
+
+</math>
+
+
+			<br><br>
+			As it is generally intractable to compute this in high 
+			dimensions, at each iteration we instead sample
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mover>
+    <mi>t</mi>
+    <mo>&#x303;</mo> <!-- combining tilde -->
+  </mover>
+</math>
+			on [0,1], and make a gradient step as to minimize
+			<br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+
+  <!-- 𝔼 with subscript t ~ U([0,1]) -->
+  <msub>
+    <mi>&#x1D53C;</mi> <!-- 𝔼 -->
+    <mrow>
+      <mi>t</mi>
+      <mo>&#x223C;</mo> <!-- ∼ -->
+      <mi>U</mi>
+      <mfenced open="[" close="]">
+        <mn>0,1</mn>
+
+      </mfenced>
+    </mrow>
+  </msub>
+
+  <mo>[</mo>
+
+  <!-- \mathcal{L} -->
+  <mi mathvariant="script">L</mi>
+
+  <!-- ( φ_θ(t) ) -->
+  <mfenced>
+    <mrow>
+      <msub>
+        <mi>&#x03C6;</mi> <!-- φ -->
+        <mi>&#x03B8;</mi> <!-- θ -->
+      </msub>
+      <mfenced>
+        <mi>t</mi>
+      </mfenced>
+    </mrow>
+  </mfenced>
+
+  <mo>]</mo>
+
+</math>
+
+			<br><br>
+
+			<br><br>
+			The two types of curves considered is the (quadratic) Bezier curve
+			<br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+
+  <!-- φ_{θ_C}(t) -->
+  <msub>
+    <mi>&#x03C6;</mi>        <!-- φ -->
+    <msub>
+      <mi>&#x03B8;</mi>      <!-- θ -->
+      <mi>C</mi>
+    </msub>
+  </msub>
+  <mfenced><mi>t</mi></mfenced>
+
+  <mo>=</mo>
+
+  <!-- (1 - t)^2 θ_A -->
+  <msup>
+    <mfenced>
+      <mrow>
+        <mn>1</mn><mo>-</mo><mi>t</mi>
+      </mrow>
+    </mfenced>
+    <mn>2</mn>
+  </msup>
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>A</mi>
+  </msub>
+
+  <mo>+</mo>
+
+  <!-- 2 t (1 - t) θ_C -->
+  <mn>2</mn><mi>t</mi>
+  <mfenced>
+    <mrow>
+      <mn>1</mn><mo>-</mo><mi>t</mi>
+    </mrow>
+  </mfenced>
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>C</mi>
+  </msub>
+
+  <mo>+</mo>
+
+  <!-- t^2 θ_B -->
+  <msup>
+    <mi>t</mi>
+    <mn>2</mn>
+  </msup>
+  <msub>
+    <mi>&#x03B8;</mi>
+    <mi>B</mi>
+  </msub>
+
+  <mo>,</mo>
+
+  <!--  t ∈ [0,1] -->
+  <mtext>&#xA0;</mtext>
+  <mi>t</mi>
+  <mo>&#x2208;</mo> <!-- ∈ -->
+  <mfenced open="[" close="]">
+    <mn>0,1</mn>
+  </mfenced>
+
+</math>
+
+			<br><br>
+			and the piecewise linear "PolyChain"
+			<br><br>
+			<math xmlns="http://www.w3.org/1998/Math/MathML">
+
+  <!-- φ_{θ_C}(t) -->
+  <msub>
+    <mi>&#x03C6;</mi>        <!-- φ -->
+    <msub>
+      <mi>&#x03B8;</mi>      <!-- θ -->
+      <mi>C</mi>
+    </msub>
+  </msub>
+  <mfenced><mi>t</mi></mfenced>
+
+  <mo>=</mo>
+
+  <!-- piecewise -->
+  <mrow>
+    <mo>{</mo>
+    <mtable columnalign="left left">
+
+      <!-- First row -->
+      <mtr>
+        <mtd>
+          <mrow>
+            <mn>2</mn>
+            <mfenced>
+              <mrow>
+                <mi>t</mi>
+                <msub><mi>&#x03B8;</mi><mi>C</mi></msub>
+                <mo>+</mo>
+                <mfenced>
+                  <mrow>
+                    <mn>0.5</mn><mo>-</mo><mi>t</mi>
+                  </mrow>
+                </mfenced>
+                <msub><mi>&#x03B8;</mi><mi>A</mi></msub>
+              </mrow>
+            </mfenced>
+          </mrow>
+        </mtd>
+
+        <mtd>
+          <mtext>&#xA0;for&#xA0;</mtext>
+          <mi>t</mi>
+          <mo>&#x2208;</mo>
+          <mfenced open="[" close="]">
+            <mn>0,0.5</mn>
+          </mfenced>
+        </mtd>
+      </mtr>
+
+      <!-- Second row -->
+      <mtr>
+        <mtd>
+          <mrow>
+            <mn>2</mn>
+            <mfenced>
+              <mrow>
+                <mfenced>
+                  <mrow>
+                    <mi>t</mi><mo>-</mo><mn>0.5</mn>
+                  </mrow>
+                </mfenced>
+                <msub><mi>&#x03B8;</mi><mi>B</mi></msub>
+                <mo>+</mo>
+                <mfenced>
+                  <mrow>
+                    <mn>1</mn><mo>-</mo><mi>t</mi>
+                  </mrow>
+                </mfenced>
+                <msub><mi>&#x03B8;</mi><mi>C</mi></msub>
+              </mrow>
+            </mfenced>
+          </mrow>
+        </mtd>
+
+        <mtd>
+          <mtext>&#xA0;for&#xA0;</mtext>
+          <mi>t</mi>
+          <mo>&#x2208;</mo>
+          <mfenced open="[" close="]">
+            <mn>0.5,1</mn>
+          </mfenced>
+        </mtd>
+      </mtr>
+
+    </mtable>
+  </mrow>
+
+</math>
+
+
+
 		    </div>
 		    <div class="margin-right-block">
 					<!-- Add text here-->	
@@ -1065,6 +1506,7 @@ and the distance between minima
 							<a id="ref_18"></a>[18] J. Martens and I. Sutskever, "<a href="https://www.cs.toronto.edu/~jmartens/docs/HF_book_chapter.pdf" target="_blank">Training Deep and Recurrent Networks with Hessian-Free Optimization</a>", pp. 479-535, Springer Berlin Heidelberg, 2012.<br><br>
 							<a id="ref_19"></a>[19] L. Oneto, S. Ridella, and D. Anguita, "<a href="https://www.sciencedirect.com/science/article/pii/S0925231223003508" target="_blank">Do we really need a new theory to understand over-parameterization?</a>", <i>Neurocomputing</i>, vol. 543, p. 126227, 2023.<br><br>
 							<a id="ref_20"></a>[20] J. Cohen, A. Damian, A. Talwalkar, J. Z. Kolter, and J. D. Lee, "<a href="https://arxiv.org/abs/2410.24206" target="_blank">Understanding optimization in deep learning with central flows</a>", <i>The Thirteenth International Conference on Learning Representations</i>, 2025.<br><br>
+							<a id="ref_20"></a>[21] T. Garipov, P. Izmailov, D. Podoprikhin, D. P. Vetrov, and A. G. Wilson, "<a href="https://github.com/timgaripov/dnn-mode-connectivity" target="_blank">timgaripov/dnn-mode-connectivity</a>", <i>GitHub-repository</i>, 2018.<br><br>
 						</div>
 		    </div>
 		    <div class="margin-right-block">
