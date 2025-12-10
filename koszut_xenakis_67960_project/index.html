@@ -316,7 +316,7 @@ networks, which scales unfavorably with architecture complexity. Restricting to 
 family keeps the computational cost feasible.</li>
 			</ul>
 			We chose ResNets in particular because they were covered in our course and are known to
-outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a>.
+outperform "plain" CNNs on image recognition tasks <a href="#ref_15">[15]</a>.
 			By spanning more than an order of magnitude in model size, this architectural sweep allowed us to examine how path geometry, barrier height, and generalization evolve as networks transition from moderately to heavily overparameterized regimes.<br><br>
 			The number of parameters in the chosen models can be seen in the table below.<br><br>
 
@@ -526,7 +526,7 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi mathvariant="script">L</mi>
 </math>
-			is the loss function used to train the endpoints, and <br><br>
+			is the loss function used to train the endpoints and <br><br>
 			<math xmlns="http://www.w3.org/1998/Math/MathML">
 
   <!-- q_θ(t) -->
@@ -603,12 +603,7 @@ outperform ”plain” CNNs on image recognition tasks <a href="#ref_15">[15]</a
 			<br><br>
 			As it is generally intractable to compute this in high 
 			dimensions, at each iteration we instead sample
-			<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mover>
-    <mi>t</mi>
-    <mo>&#x303;</mo> <!-- combining tilde -->
-  </mover>
-</math>
+			<em>t</em>
 			on [0,1], and make a gradient step as to minimize
 			<br><br>
 			<math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -892,7 +887,7 @@ exhibits elevated loss.
 
 
 				<h3>3.6.2 Angle</h3>
-Many curve-based interpolation methods, such as Bezier curves or PolyChains, introduce a middle
+The curve-based interpolation methods that were used (Bezier curves or PolyChains) introduce a middle
 point that is optimized to minimize loss along the path. The relative position of this middle point
 provides a proxy for how “curved” the low-loss path must be in order to connect the two solutions.
 Conceptually, if the middle point lies close to the straight segment connecting the endpoints, the
